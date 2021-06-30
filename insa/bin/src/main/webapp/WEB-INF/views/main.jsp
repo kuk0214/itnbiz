@@ -3,21 +3,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>인사관리시스템</title>
+<title>인사관리 시스템</title>
 <link rel="stylesheet" type="text/css" href="/insa/css/w3.css">
 <link rel="stylesheet" type="text/css" href="/insa/css/user.css">
 <script type="text/javascript" src="/insa/js/jquery-3.6.0.min.js"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('#ibtn').click(function() {
-			$(location).attr('href', '/insa/empreg.insa');
-		});
-		
-		$('#selbtn').click(function() {
-			$(location).attr('href', '/insa/selemp.insa');
-		});
-	});
-</script>
 </head>
 <body>
 	<div>
@@ -27,11 +16,11 @@
 		<div>
 			<div>
 				<h2>인사정보를 입력하겠습니다.</h2>
-				<div class="w3-button" id="ibtn">입력</div>
+				<button>입력</button>
 			</div>
 			<div>
 				<h2>인사정보를 조회하겠습니다.</h2>
-				<div class="w3-button" id="selbtn">조회</div>
+				<button>조회</button>
 			</div>
 		</div>
 	</div>

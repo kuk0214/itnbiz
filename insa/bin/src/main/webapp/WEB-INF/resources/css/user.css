@@ -69,27 +69,6 @@
 .mgl20 {
 	margin-left: 20px;
 }
-.mgl30 {
-	margin-left: 30px;
-}
-.mgl40 {
-	margin-left: 40px;
-}
-.mgl80 {
-	margin-left: 80px;
-}
-.mgr5 {
-	margin-right: 5px;
-}
-.mgr20 {
-	margin-right: 20px;
-}
-.mgr30 {
-	margin-right: 30px;
-}
-.mgr40 {
-	margin-right: 40px;
-}
 
 /* 패딩 클래스*/
 .pd0 {
@@ -99,8 +78,8 @@
 .pdAll10 {
 	padding: 10px;
 }
-.pdAll40 {
-	padding: 40px;
+.pdAll20 {
+	padding: 20px;
 }
 
 .pdt5 {
@@ -139,17 +118,8 @@
 .w650 {
 	width: 650px;
 }
-.w300 {
-	width: 300px;
-}
 .w250 {
 	width: 250px;
-}
-.w200 {
-	width: 200px;
-}
-.w180 {
-	width: 180px;!important
 }
 .w150 {
 	width: 150px;
@@ -169,9 +139,6 @@
 
 .h20 {
 	height: 20px;
-}
-.h28 {
-	height: 28px;
 }
 .h40 {
 	height: 40px;
@@ -215,8 +182,8 @@
 	font-size: 12pt;
 }
 
-.ft20 {
-	font-size: 20pt;
+.ft14 {
+	font-size: 14pt;
 	font-weight: bold;
 }
 .clrgrey {
@@ -255,29 +222,11 @@
 	border-right: 2px solid #A3D044;
 }
 
-.bgcg {
-	background-color: #D3D3D3;
+.bgc {
+	background-color: #f5f5f5;
 }
 
-.flotl {
+seation {
 	flot: left;
 	overflow: hidden;
 }
-
-.flotr {
-	flot: right;
-	overflow: hidden;
-}
-label {
-	widht: 150px;
-	height: 28px;
-}
-input {
-	width: 280px;
-}
-
-select {
-	width: 280px;
-	height: 28px;
-}
-

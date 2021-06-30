@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybaits.org/DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="iSQL">
+	<select id="selSabun" resultType="int">
+		SELECT
+			NVL(MAX(sabun) + 1, 100001)
+		FROM
+			insa
+	</select>
+	
+	<insert id="empregProc" parameterType="iVO">
+		INSERT INTO 
+			insa(sabun, name, id, pwd, hp, email, join_day)
+		VALUES(
+    		(SELECT NVL(MAX(sabun) + 1, 100001) FROM insa),
+    		#{name}, #{id}, #{pwd}, #{hp}, #{email}, #{join_day}
+		)
+	</insert>
+</mapper>
