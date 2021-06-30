@@ -227,7 +227,7 @@
 			<div class="mgl80 mgb20">
 					<label class="w250 mbr5 pdr30">KOSA등록</label>
 					<select class="mgr30" name="kosa_reg_yn">
-						<option></option>
+						<option></option> 
 					</select>
 					<label class="w250 pdr30">KOSA등급</label>
 					<select class="mgr30" name="kosa_class_code">
