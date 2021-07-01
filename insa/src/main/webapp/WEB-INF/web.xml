@@ -43,6 +43,6 @@
 		
 	<servlet-mapping>
 		<servlet-name>insaServlet</servlet-name>
-		<url-pattern>*.mentor</url-pattern>
+		<url-pattern>*.insa</url-pattern>
 	</servlet-mapping>
 </web-app>

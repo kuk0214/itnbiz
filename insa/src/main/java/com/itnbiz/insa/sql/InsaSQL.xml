@@ -11,6 +11,22 @@
 			insa
 	</select>
 	
+	<select id="idCheck" resultType="int" parameterType="string">
+		SELECT
+			count(*)
+		FROM
+			insa
+		WHERE
+			id = #{id}
+	</select>
+	
+	<select id="comCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com			
+	</select>
+
 	<insert id="empregProc" parameterType="iVO">
 		INSERT INTO 
 			insa(sabun, name, id, pwd, hp, email, join_day)

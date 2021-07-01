@@ -1,7 +1,8 @@
 package com.itnbiz.insa.controller;
 
-import java.util.HashMap;
+import java.util.*;
 
+import org.apache.ibatis.javassist.tools.reflect.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,14 +23,34 @@ public class Main {
 		return mv;
 	}
 	
-	@RequestMapping("/empreg.mentor")
+	@RequestMapping("/empreg.insa")
 	public ModelAndView empreg(ModelAndView mv) {
 		int sabun = iDao.selSabun();
+		List list = iDao.comCodeSel();
 		mv.addObject("sabun", sabun);
+		mv.addObject("LIST", list);
 		return mv;
 	}
 	
-	@RequestMapping("/empregProc.mentor")
+	@RequestMapping("/idCheck.insa")
+	@ResponseBody
+	public HashMap<String, String> idCheck(String id) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("result", "NO");
+		int cnt = iDao.idCheck(id);
+		if(cnt == 0) {
+			map.put("result", "OK");
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping("/jusoPopup.insa")
+	public ModelAndView jusopopup(ModelAndView mv) {
+		return mv;
+	}
+	
+	@RequestMapping("/empregProc.insa")
 	public ModelAndView empregProc(ModelAndView mv, InsaVO iVO) {
 		iDao.empregProc(iVO);
 		
