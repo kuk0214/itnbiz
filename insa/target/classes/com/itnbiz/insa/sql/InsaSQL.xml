@@ -29,10 +29,9 @@
 
 	<insert id="empregProc" parameterType="iVO">
 		INSERT INTO 
-			insa(sabun, name, id, pwd, hp, email, join_day)
+			insa(sabun, name, id, pwd, hp, email)
 		VALUES(
-    		(SELECT NVL(MAX(sabun) + 1, 100001) FROM insa),
-    		#{name}, #{id}, #{pwd}, #{hp}, #{email}, #{join_day}
+    		#{sabun}, #{name}, #{id}, #{pwd}, #{hp}, #{email}
 		)
 	</insert>
 </mapper>

@@ -23,8 +23,8 @@ public class Main {
 		return mv;
 	}
 	
-	@RequestMapping("/empreg.insa")
-	public ModelAndView empreg(ModelAndView mv) {
+	@RequestMapping("/empReg.insa")
+	public ModelAndView empReg(ModelAndView mv) {
 		int sabun = iDao.selSabun();
 		List list = iDao.comCodeSel();
 		mv.addObject("sabun", sabun);
@@ -50,11 +50,17 @@ public class Main {
 		return mv;
 	}
 	
-	@RequestMapping("/empregProc.insa")
-	public ModelAndView empregProc(ModelAndView mv, InsaVO iVO) {
-		iDao.empregProc(iVO);
-		
-		mv.setViewName("empreg");
-		return mv;
+	@RequestMapping("/empRegProc.insa")
+	@ResponseBody
+	public HashMap<String, String> empRegProc(InsaVO iVO) {
+		int sabun = iVO.getSabun();
+		System.out.println(sabun);
+		int cnt = iDao.empregProc(iVO);
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("result", "NO");
+		if(cnt == 1) {
+			map.put("result", "OK");
+		}
+		return map;
 	}
 }

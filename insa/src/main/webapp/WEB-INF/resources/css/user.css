@@ -294,3 +294,9 @@ select {
 .bgcw {
 	background-color: white;
 }
+
+.phalign::-webkit-input-placeholder {
+	text-align: right;
+	margin-right: 10px;
+}
+

@@ -12,210 +12,31 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript">
-	function profileURL(input) {
-		if (input.files && input.files[0]) {
-	    	var reader = new FileReader();
-	    	reader.onload = function(e) {
-	    		document.getElementById('img_view').src = e.target.result;
-	    	};
-	    	reader.readAsDataURL(input.files[0]);
-		} 
-	}
-	
-	function crfileURL(input) {
-		if (input.files && input.files[0]) {
-	    	var reader = new FileReader();
-	    	reader.onload = function(e) {
-	    		document.getElementById('crfile_img').src = e.target.result;
-	    	};
-	    	reader.readAsDataURL(input.files[0]);
-		} 
-	}
-	
-	function cmpfileURL(input) {
-		if (input.files && input.files[0]) {
-	    	var reader = new FileReader();
-	    	reader.onload = function(e) {
-	    		document.getElementById('cmpfile_img').src = e.target.result;
-	    		document.getElementById('cmp_reg_image').value = e.target.result;
-	    	};
-	    	reader.readAsDataURL(input.files[0]);
-		} 
-	}
-	
-	function jusoCallBack(addr1, refaddr, addr2, zip) {
-		$('#addr1').val(addr1 + ' ' +refaddr);
-		$('#addr2').val(addr2);
-		$('#zip').val(zip);
-	}
-	
 	$(document).ready(function() {
-		$('#rbtn').click(function() {
-			document.location.reload();
-		});
-		
-		$('#rbtn').click(function() {
+
+		$('#sbtn').click(function() {
+			var form = $('#fileUploadForm')[0];
 			
-		});
-		
-		$('#hbtn').click(function() {
-			$(location).attr('href', '/insa/main.insa');
-		});
-		
-		$('#ibtn').click(function() {
-			$(location).attr('href', '/insa/empreg.insa');
-		});
-		
-		$('#selbtn').click(function() {
-			$(location).attr('href', '/insa/selemp.insa');
-		});
-		
-		$('#reg_no').blur(function() {
-			var today = new Date();
-			var full_year = today.getFullYear() + "";
-			var now_year = Number(full_year.substring(2,4));
-			var year = Number($('#reg_no').val().substring(0,2));
-			if(year > now_year) {
-				age = now_year + 101 - year;
-				$('#years').val(age);
-			} else {
-				age = now_year - year + 1;
-				$('#years').val(age);
-			}
-		});
-		
-		$.datepicker.setDefaults({
-			dateFormat: 'yy-mm-dd',
-			showMonthAfterYear: true,
-			showOn: "both",
-			buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$('#mil_startdate').datepicker();
-		$('#mil_enddate').datepicker();
-		$('#join_day').datepicker();
-		$('#retire_day').datepicker();
-		
-		$('#mil_enddate').blur(function() {
-			alert('전역일 끝');
-		});
-		
-		$('#id').blur(function() {
-			var idreq = /^(?=.*[a-z])(?=.*[0-9]).{8,15}$/;
-			var tid = $('#id').val();
-			if(!idreq.test(tid)) {
-				alert('영어소문자와 숫자포함, 최소8글자에서 최대 15글자만 가능합니다');
-				$('#id').val('');
-				return
-			}
+			var data = new FormData(form);
 			
 			$.ajax({
-				url: '/insa/idCheck.insa',
-				type: 'post',
+				url: '/insa/empRegProc.insa',
+				type: 'POST',
+				enctype: 'multipart/form-data',
 				dataType: 'json',
-				data: {
-					id: tid
-				},
+				data: data,
+				processData: false,
+				contentType: false,
 				success: function(obj) {
 					if(obj.result == 'OK') {
-						alert('사용가능한 아이디 입니다.')
+						alert('등록 성공')
 					} else {
-						alert('*** 이미 등록된 아이디입니다 ***');
-						$('#id').val('')
+						alert('등록 실패');
 					}
 				},
 				error: function() {
 					alert('####### 통신 에러 #######')
 				}
-			});
-		});
-		
-		$('#salary').blur(function() {
-			var salary = $('#salary').val();
-			salary = salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-			$('#salary').val(salary);
-		});
-		
-		$('#filebtn').click(function() {
-			$('#profile_image').click();
-		});
-		
-		$('#crbtn').click(function() {
-			$('#crfile').click();
-		});
-		
-		$('#self_img').click(function() {
-			$('#modal01').css('display', 'block');
-		});
-		
-		$('#cmpbtn').click(function() {
-			$('#cmpfile').click();
-		});
-		
-		$('#cmp_img').click(function() {
-			$('#modal02').css('display', 'block');
-		})
-		
-		$('#saddr').click(function goPopup() { 
-			var pop = window.open("/insa/jusoPopup.insa","pop","width=570,height=420, scrollbars=yes, resizable=yes");  
-		});
-		
-		$('#pwd').focus(function() {
-			$(this).val('');	
-		});
-		
-		$('#pwd_view').keyup(function() {
-			var tpwd = $(this).val();
-			var pwd = $('#pwd').val();
-			if(tpwd.length == 1) {
-				$('#pwd').val(tpwd);				
-			} else if(tpwd.length > 1) {
-				$('#pwd').val(pwd + tpwd.substring(tpwd.length - 1));
-			}
-			var reg1 = /^.*[a-zA-Z0-9!@#$%^&*]$/;
-			if(!reg1.test(tpwd)) {
-				alert('영어 대소문자, 숫자, 특수문자!@#$%^&*만 사용가능합니다.');
-				$(this).val('');
-				return
-			}
-			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9]/g, '*') + tpwd.substring(tpwd.length - 1);
-			if(tpwd.length > 1) {
-				$(this).val(spwd);				
-			}
-			
-			$('#pwd_view').blur(function() {
-				var tpwd = $(this).val();
-				var fpwd = tpwd.replace(/[a-zA-Z0-9]/g, '*')
-				$(this).val(fpwd);
-			});
-		});
-		
-		$('#repwd_view').keyup(function() {
-			var tpwd = $(this).val();
-			var repwd = $('#repwd').val();
-			if(tpwd.length == 1) {
-				$('#repwd').val(tpwd);				
-			} else if(tpwd.length > 1) {
-				$('#repwd').val(repwd + tpwd.substring(tpwd.length - 1));
-			}
-			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9]/g, '*') + tpwd.substring(tpwd.length - 1);
-			if(tpwd.length > 1) {
-				$(this).val(spwd);				
-			}
-			
-			$('#repwd_view').blur(function() {
-				var pwd = $('#pwd').val();
-				var repwd = $('#repwd').val();
-				if(!(pwd == repwd)) {
-					$('#repwd_view').val('');
-					$('#repwd').val('');
-					$('#repwd_view').focus();
-					return
-				}
-				var tpwd = $(this).val();
-				var fpwd = tpwd.replace(/[a-zA-Z0-9]/g, '*');
-				$(this).val(fpwd);
 			});
 		});
 	});
@@ -235,7 +56,7 @@
 			<div class="w3-third w3-button w3-black" id="pbtn">이전</div>
 		</div>
 	</div>
-	<div>
+	<form method="POST" action="/insa/empRegProc.insa" name="frm" id="frm" enctype="multipart/form-data">
 		<div>
 			<div class="inblock">
 				<div class="mgl40 mgr40 pdAll40">
@@ -274,8 +95,9 @@
 					<input class="mgr30" name="phone" id="phone">
 					<label for="hp" class="mgr30">*핸드폰번호</label>
 					<input class="mgr30" name="hp" id="hp">
-					<label for="reg_no" class="mgr30">주민번호</label>
-					<input name="reg_no" id="reg_no">
+					<label for="reg_no_view" class="mgr30">주민번호</label>
+					<input id="reg_no_view">
+					<input type="hidden" name="reg_no" id="reg_no">
 				</div>
 				<div class="mgb10">
 					<label for="years" class="mgr30">연령</label>
@@ -322,8 +144,8 @@
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
-					<label for="salary" class="pdr30">연봉</label>
-					<input name="salary" id="salary">
+					<label for="salary" class="pdr30" >연봉(만원)</label>
+					<input class="phalign w3-right-text" name="salary" id="salary" placeholder="(만원)">
 				</div>
 			</div>
 		</div>
@@ -358,15 +180,15 @@
 				</c:forEach>
 					</select>
 			</div>
-			<div class="mgl80 mgb20">
-					<label for="mil_type" class="mbr5 pdr30">군별</label>
+			<div class="mgl80 mgb20 mil">
+					<label for="mil_type" class="mbr5 pdr30 mil">군별</label>
 					<select class="mgr30" name="mil_type" id="mil_type">
 						<option></option>
 				<c:forEach var="data" items="${LIST}" begin="38" end="40">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
-					<label for="mil_level" class="pdr30">계급</label>
+					<label for="mil_level" class="pdr30 mil">계급</label>
 					<select class="mgr30" name="mil_level" id="mil_level">
 						<option></option>
 				<c:forEach var="data" items="${LIST}" begin="41" end="44">
@@ -419,7 +241,7 @@
 					<input type="file" class="w3-hide" id="crfile" onchange="crfileURL(this);">
 			</div>
 		</div>
-	</div>
+	</form>
 	
 	<div id="modal01" class="w3-modal" onclick="this.style.display='none'">
     	<div class="w3-modal-content w3-animate-zoom">

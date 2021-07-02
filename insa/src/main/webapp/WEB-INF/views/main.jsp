@@ -10,7 +10,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#ibtn').click(function() {
-			$(location).attr('href', '/insa/empreg.insa');
+			$(location).attr('href', '/insa/empReg.insa');
 		});
 		
 		$('#selbtn').click(function() {
