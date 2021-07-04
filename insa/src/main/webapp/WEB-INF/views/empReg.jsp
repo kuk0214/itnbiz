@@ -270,32 +270,31 @@
 		});
 
 		$('#sbtn').click(function() {
-			var sabun = $('#sabun').val();
+			/* var sabun = $('#sabun').val();
 			var name = $('#name').val();
 			var id = $('#id').val();
 			var pwd = $('#pwd').val();
 			var hp = $('#hp').val();
-			var email = $('#email').val();
+			var email = $('#email').val(); */
 			
 			var data = new FormData($('#frm')[0]);
 			
-			$.ajax({
+			$.ajax({ 
 				url: '/insa/empRegProc.insa',
-				type: "POST",
-				data: data,
-				processData: false,
-				contentType: false,
-				success: function(obj) {
-					if(obj.result == 'OK') {
-						alert('등록 성공')
-					} else {
-						alert('등록 실패');
+				data: data, 
+				processData: false, 
+				contentType: false, 
+				type: 'POST', 
+				success: function(data) { 
+					if(data.result == 'NO') {
+						alert('됨?')
 					}
 				},
 				error: function() {
 					alert('####### 통신 에러 #######')
 				}
 			});
+
 		});
 	});
 </script>
@@ -314,7 +313,7 @@
 			<div class="w3-third w3-button w3-black" id="pbtn">이전</div>
 		</div>
 	</div>
-	<form method="POST" action="/insa/empRegProc.insa" name="frm" id="frm" enctype="multipart/form-data">
+	<form method="POST" name="frm" id="frm" enctype="multipart/form-data">
 		<div>
 			<div class="inblock">
 				<div class="mgl40 mgr40 pdAll40">
