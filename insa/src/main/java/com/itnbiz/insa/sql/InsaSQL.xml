@@ -29,9 +29,30 @@
 
 	<insert id="empregProc" parameterType="iVO">
 		INSERT INTO 
-			insa(sabun, name, id, pwd, hp, email)
+			insa(sabun, name, id, pwd, hp, email, join_day, retire_day, put_yn, reg_no, eng_name, phone, 
+				 carrier, pos_gbn_code, cmp_reg_no, sex, years, zip, addr1, addr2, dept_code, salary, kosa_reg_yn,
+				 kosa_class_code, mil_yn, mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level,
+				 self_intro, crm_name)
 		VALUES(
-    		#{sabun}, #{name}, #{id}, #{pwd}, #{hp}, #{email}
+    		#{sabun}, #{name}, #{id}, #{pwd}, #{hp}, #{email}, #{join_day, jdbcType=DATE}, #{retire_day, jdbcType=DATE},
+    		#{put_yn, jdbcType=VARCHAR}, #{reg_no, jdbcType=VARCHAR}, #{eng_name, jdbcType=VARCHAR},
+    		#{phone, jdbcType=VARCHAR}, #{carrier, jdbcType=VARCHAR}, #{pos_gbn_code, jdbcType=VARCHAR},
+    		#{cmp_reg_no, jdbcType=VARCHAR}, #{sex, jdbcType=VARCHAR}, #{years, jdbcType=INTEGER},
+    		#{zip, jdbcType=INTEGER}, #{addr1, jdbcType=VARCHAR}, #{addr2, jdbcType=VARCHAR},
+    		#{dept_code, jdbcType=VARCHAR}, #{salary, jdbcType=INTEGER}, #{kosa_reg_yn, jdbcType=VARCHAR},
+    		#{kosa_class_code, jdbcType=VARCHAR}, #{mil_yn, jdbcType=VARCHAR}, #{mil_type, jdbcType=VARCHAR},
+    		#{mil_level, jdbcType=VARCHAR}, #{mil_startdate, jdbcType=VARCHAR}, #{mil_enddate, jdbcType=VARCHAR},
+    		#{join_type, jdbcType=VARCHAR}, #{gart_level, jdbcType=VARCHAR}, #{self_intro, jdbcType=VARCHAR},
+    		#{crm_name, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<insert id="addInsaFile" parameterType="iVO">
+		INSERT INTO
+			insa_file(seq, sabun, oriname, savename, dir)
+		VALUES(
+			(SELECT NVL(MAX(seq) + 1, 1000001) FROM insa_file),
+			#{sabun}, #{oriname}, #{savename}, #{dir}
 		)
 	</insert>
 </mapper>

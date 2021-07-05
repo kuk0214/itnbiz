@@ -30,4 +30,9 @@ public class InsaDao {
 	public int empregProc(InsaVO iVO) {
 		return sqlSession.insert("iSQL.empregProc", iVO);
 	}
+	
+	// 사원 이미지 파일 등록 데이터베이스 전담 처리함수
+	public int addInsaFile(InsaVO iVO) {
+		return sqlSession.insert("iSQL.addInsaFile", iVO);
+	}
 }

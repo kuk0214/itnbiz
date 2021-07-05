@@ -1,16 +1,20 @@
 package com.itnbiz.insa.vo;
 
-import java.util.Date;
+import java.sql.Date;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class InsaVO {
 	private int seq, sabun, years, zip, salary, sugst_money, current_salary, gart_year, gart_month;
-	private String put_yn, name, reg_no, eng_name, phone, hp, carrier, pos_gbn_code, cmp_reg_no, cmp_reg_image,
+	private String put_yn, name, reg_no, eng_name, phone, hp, carrier, pos_gbn_code, cmp_reg_no,
 			sex, email, addr1, addr2, dept_code, join_gbn_code, id, pwd, kosa_reg_yn, kosa_class_code, mil_yn,
-			mil_type, mil_level, mil_startday, mil_endday, join_type, gart_level, self_intro, crm_name,
-			profile_image, carrier_image, gubun, code, note, codename, pjt_gbn_code, eqm_yn, work_area,
-			major_stud_gbn, school_name, cmp_name, respon_dept, work_contents;
+			mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level, self_intro, crm_name,
+			gubun, code, note, codename, pjt_gbn_code, eqm_yn, work_area, major_stud_gbn, school_name,
+			cmp_name, respon_dept, work_contents, oriname, savename, dir;
 	private Date join_day, retire_day, wrk_posb_day, work_start_day, work_end_day;
-	
+	private MultipartFile profile_image, carrier_image, cmp_reg_image;
 	public int getSeq() {
 		return seq;
 	}
@@ -119,12 +123,6 @@ public class InsaVO {
 	public void setCmp_reg_no(String cmp_reg_no) {
 		this.cmp_reg_no = cmp_reg_no;
 	}
-	public String getCmp_reg_image() {
-		return cmp_reg_image;
-	}
-	public void setCmp_reg_image(String cmp_reg_image) {
-		this.cmp_reg_image = cmp_reg_image;
-	}
 	public String getSex() {
 		return sex;
 	}
@@ -203,17 +201,17 @@ public class InsaVO {
 	public void setMil_level(String mil_level) {
 		this.mil_level = mil_level;
 	}
-	public String getMil_startday() {
-		return mil_startday;
+	public String getMil_startdate() {
+		return mil_startdate;
 	}
-	public void setMil_startday(String mil_startday) {
-		this.mil_startday = mil_startday;
+	public void setMil_startdate(String mil_startdate) {
+		this.mil_startdate = mil_startdate;
 	}
-	public String getMil_endday() {
-		return mil_endday;
+	public String getMil_enddate() {
+		return mil_enddate;
 	}
-	public void setMil_endday(String mil_endday) {
-		this.mil_endday = mil_endday;
+	public void setMil_enddate(String mil_enddate) {
+		this.mil_enddate = mil_enddate;
 	}
 	public String getJoin_type() {
 		return join_type;
@@ -238,18 +236,6 @@ public class InsaVO {
 	}
 	public void setCrm_name(String crm_name) {
 		this.crm_name = crm_name;
-	}
-	public String getProfile_image() {
-		return profile_image;
-	}
-	public void setProfile_image(String profile_image) {
-		this.profile_image = profile_image;
-	}
-	public String getCarrier_image() {
-		return carrier_image;
-	}
-	public void setCarrier_image(String carrier_image) {
-		this.carrier_image = carrier_image;
 	}
 	public String getGubun() {
 		return gubun;
@@ -323,6 +309,24 @@ public class InsaVO {
 	public void setWork_contents(String work_contents) {
 		this.work_contents = work_contents;
 	}
+	public String getOriname() {
+		return oriname;
+	}
+	public void setOriname(String oriname) {
+		this.oriname = oriname;
+	}
+	public String getSavename() {
+		return savename;
+	}
+	public void setSavename(String savename) {
+		this.savename = savename;
+	}
+	public String getDir() {
+		return dir;
+	}
+	public void setDir(String dir) {
+		this.dir = dir;
+	}
 	public Date getJoin_day() {
 		return join_day;
 	}
@@ -353,5 +357,25 @@ public class InsaVO {
 	public void setWork_end_day(Date work_end_day) {
 		this.work_end_day = work_end_day;
 	}
+	public MultipartFile getProfile_image() {
+		return profile_image;
+	}
+	public void setProfile_image(MultipartFile profile_image) {
+		this.profile_image = profile_image;
+	}
+	public MultipartFile getCarrier_image() {
+		return carrier_image;
+	}
+	public void setCarrier_image(MultipartFile carrier_image) {
+		this.carrier_image = carrier_image;
+	}
+	public MultipartFile getCmp_reg_image() {
+		return cmp_reg_image;
+	}
+	public void setCmp_reg_image(MultipartFile cmp_reg_image) {
+		this.cmp_reg_image = cmp_reg_image;
+	}
+	
+	
 	
 }

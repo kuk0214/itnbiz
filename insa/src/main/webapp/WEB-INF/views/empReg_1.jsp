@@ -15,7 +15,7 @@
 	$(document).ready(function() {
 
 		$('#sbtn').click(function() {
-			var form = $('#fileUploadForm')[0];
+			var form = $('#frm')[0];
 			
 			var data = new FormData(form);
 			

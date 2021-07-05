@@ -19,6 +19,7 @@
 	    		document.getElementById('img_view').src = e.target.result;
 	    	};
 	    	reader.readAsDataURL(input.files[0]);
+	    	
 		} 
 	}
 	
@@ -49,6 +50,28 @@
 	}
 	
 	$(document).ready(function() {
+		var fileTarget1 = $('#crfile'); 
+		
+		fileTarget1.on('change', function(){
+			if(window.FileReader){
+				var filename = $(this)[0].files[0].name; } 
+			else {
+				var filename = $(this).val().split('/').pop().split('\\').pop(); // 파일명만 추출
+			} 
+			$('#carrier_image_name').val(filename);
+		});
+		
+		var fileTarget2 = $('#cmpfile');
+		
+		fileTarget2.on('change', function(){
+			if(window.FileReader){
+				var filename = $(this)[0].files[0].name; } 
+			else {
+				var filename = $(this).val().split('/').pop().split('\\').pop(); // 파일명만 추출
+			} 
+			$('#cmp_reg_image_name').val(filename);
+		});
+
 		$('#rbtn').click(function() {
 			document.location.reload();
 		});
@@ -118,7 +141,7 @@
 		
 		$('#salary').keyup(function() {
 			var salary = $('#salary').val();
-		if(salary.length == 4) {
+			if(salary.length == 4) {
 				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
 			} else if(salary.length == 8) {
 				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
@@ -270,12 +293,41 @@
 		});
 
 		$('#sbtn').click(function() {
-			/* var sabun = $('#sabun').val();
+			var salary = $('#salary').val();
+			var zip = $('#zip').val();
+			var years = $('#years').val();
+			var retire_day = $('#retire_day').val();
+			var sabun = $('#sabun').val();
 			var name = $('#name').val();
 			var id = $('#id').val();
 			var pwd = $('#pwd').val();
 			var hp = $('#hp').val();
-			var email = $('#email').val(); */
+			var email = $('#email').val();
+			var join_day = $('#join_day').val();
+			
+			/*
+			if(!(name && id && pwd && hp && email && join_day)) {
+				alert('필수 입력 내용을 확인하세요');
+				return
+			} */
+			
+			if(!salary) {
+				$('#salary').prop('disabled', true);
+			} else {
+				$('#salary').val(salary.replaceAll(',', ''));
+			}
+			
+			if(!zip) {
+				$('#zip').prop('disabled', true);
+			}
+			
+			if(!years) {
+				$('#years').prop('disabled', true);
+			}
+			
+			if(!retire_day) {
+				$('#retire_day').prop('disabled', true);
+			}
 			
 			var data = new FormData($('#frm')[0]);
 			
@@ -283,15 +335,24 @@
 				url: '/insa/empRegProc.insa',
 				data: data, 
 				processData: false, 
-				contentType: false, 
+				contentType: false,
 				type: 'POST', 
 				success: function(data) { 
-					if(data.result == 'NO') {
-						alert('됨?')
+					if(data.result == "OK") {
+						alert("저장 완료");
+						var salary = $('#salary').val();
+						if(salary.length == 4) {
+							salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
+						} else if(salary.length == 8) {
+							salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
+						}
+						$('#salary').val(salary);
+					} else {
+						alert("저장 실패");
 					}
 				},
 				error: function() {
-					alert('####### 통신 에러 #######')
+					alert('####### 통신 에러 #######');
 				}
 			});
 
@@ -318,7 +379,8 @@
 			<div class="inblock">
 				<div class="mgl40 mgr40 pdAll40">
 					<img class="imgBox300" src="/insa/img/noimage.jpg" id="img_view"><br>
-					<input type="file" class="w3-hide" name="profile_image" id="profile_image" onchange="profileURL(this);">
+					<input type="file" class="w3-hide" name="profile_image" id="profile_image" onchange="profileURL(this);"
+						accept="image/*">
 					<input type="button" class="inblock w180 mgt5 mgl60 bgcw" id="filebtn" value="사진올리기">
 				</div>
 			</div>
@@ -486,19 +548,21 @@
 					<label for="crm_name" class="pdr30">업체명</label>
 					<input type="text" name="crm_name" id="crm_name">
 					<label for="cmp_reg_image" class="pdr30">사업자등록증</label>
-					<input type="text" name="cmp_reg_image" id="cmp_reg_image">
+					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name">
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="cmp_img">
 					<input type="button" class="inblock w150 bgcw" value="등록" id="cmpbtn">
-					<input type="file" class="w3-hide" id="cmpfile" onchange="cmpfileURL(this);">
+					<input type="file" class="w3-hide" name="cmp_reg_image" id="cmpfile" onchange="cmpfileURL(this);"
+							accept="image/*">
 			</div>
 			<div class="mgl80 mgb20">
 					<label for="self_intro" class="mbr5 pdr30">자기소개</label>
 					<textarea rows="2" cols="80" name="self_intro" id="self_intro"></textarea>
 					<label class="mbr5 pdr30">이력서</label>
-					<input type="text" id="carrier_image" name="carrier_image" >
+					<input type="text" id="carrier_image_name" name="carrier_image_name" >
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="self_img">
 					<input type="button" class="inblock w150 bgcw" value="파일업로드" id="crbtn">
-					<input type="file" class="w3-hide" id="crfile" onchange="crfileURL(this);">
+					<input type="file" class="w3-hide" name="carrier_image" id="crfile" onchange="crfileURL(this);"
+							accept="image/*">
 			</div>
 		</div>
 	</form>
