@@ -49,6 +49,63 @@
 		$('#zip').val(zip);
 	}
 	
+	function autoHypenTel(str) {
+		  str = str.replace(/[^0-9]/g, '');
+		  var tmp = '';
+
+		  if (str.substring(0, 2) == 02) {
+		    // 서울 전화번호일 경우 10자리까지만 나타나고 그 이상의 자리수는 자동삭제
+		    if (str.length < 3) {
+		      return str;
+		    } else if (str.length < 6) {
+		      tmp += str.substr(0, 2);
+		      tmp += '-';
+		      tmp += str.substr(2);
+		      return tmp;
+		    } else if (str.length < 10) {
+		      tmp += str.substr(0, 2);
+		      tmp += '-';
+		      tmp += str.substr(2, 3);
+		      tmp += '-';
+		      tmp += str.substr(5);
+		      return tmp;
+		    } else {
+		      tmp += str.substr(0, 2);
+		      tmp += '-';
+		      tmp += str.substr(2, 4);
+		      tmp += '-';
+		      tmp += str.substr(6, 4);
+		      return tmp;
+		    }
+		  } else {
+		    // 핸드폰 및 다른 지역 전화번호 일 경우
+		    if (str.length < 4) {
+		      return str;
+		    } else if (str.length < 7) {
+		      tmp += str.substr(0, 3);
+		      tmp += '-';
+		      tmp += str.substr(3);
+		      return tmp;
+		    } else if (str.length < 11) {
+		      tmp += str.substr(0, 3);
+		      tmp += '-';
+		      tmp += str.substr(3, 3);
+		      tmp += '-';
+		      tmp += str.substr(6);
+		      return tmp;
+		    } else {
+		      tmp += str.substr(0, 3);
+		      tmp += '-';
+		      tmp += str.substr(3, 4);
+		      tmp += '-';
+		      tmp += str.substr(7);
+		      return tmp;
+		    }
+		  }
+
+		  return str;
+		}
+	
 	$(document).ready(function() {
 		var fileTarget1 = $('#crfile'); 
 		
@@ -76,8 +133,8 @@
 			document.location.reload();
 		});
 		
-		$('#rbtn').click(function() {
-			
+		$('#pbtn').click(function() {
+			$(location).attr('href', '/insa/main.insa');
 		});
 		
 		$('#hbtn').click(function() {
@@ -89,9 +146,9 @@
 		});
 		
 		$('#selbtn').click(function() {
-			$(location).attr('href', '/insa/selemp.insa');
+			$(location).attr('href', '/insa/insaListForm.insa');
 		});
-		
+
 		$.datepicker.setDefaults({
 			monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
 			dayNamesMin: ['일','월','화','수','목','금','토'],
@@ -110,25 +167,34 @@
 		$('#retire_day').datepicker();
 		
 		$('#id').blur(function() {
-			var idreq = /^(?=.*[a-z])(?=.*[0-9]).{8,15}$/;
+			var idreq = /^(?=.*[a-z])(?=.*[0-9]).{7,15}$/;
 			var tid = $('#id').val();
-			if(!idreq.test(tid)) {
+			if(tid != "" && !idreq.test(tid)) {
 				alert('영어소문자와 숫자포함, 최소8글자에서 최대 15글자만 가능합니다');
-				$('#id').val('');
+				setTimeout(function() { 
+					$('#id').focus(); 
+				}, 10)
 				return
 			}
-			
+			if(!tid) {
+				return
+			}
+			var tsabun = $('#sabun').val();
+
 			$.ajax({
 				url: '/insa/idCheck.insa',
 				type: 'post',
 				dataType: 'json',
 				data: {
-					id: tid
+					id: tid,
+					sabun: tsabun
 				},
 				success: function(obj) {
 					if(obj.result == 'OK') {
-						alert('사용가능한 아이디 입니다.');
-					} else {
+						if(tid != "") {
+							alert('사용가능한 아이디 입니다.');							
+						}
+					} else if(obj.result == 'NO') {
 						alert('*** 이미 사용중인 아이디입니다 ***');
 						$('#id').val('');
 					}
@@ -141,12 +207,18 @@
 		
 		$('#salary').keyup(function() {
 			var salary = $('#salary').val();
-			if(salary.length == 4) {
-				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
-			} else if(salary.length == 8) {
-				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
+			var tsalary = $('#salary').val().replaceAll(',', '');
+			var salary_reg = /^[0-9]*$/;
+			if(salary != "" && !salary_reg.test(tsalary)) {
+				alert('숫자만 입력하세요');
+			} else {
+				if(salary.length == 4) {
+					salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
+				} else if(salary.length == 8) {
+					salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
+				}
+				$('#salary').val(salary);				
 			}
-			$('#salary').val(salary);
 		});
 		
 		$('#filebtn').click(function() {
@@ -173,10 +245,6 @@
 			var pop = window.open("/insa/jusoPopup.insa","pop","width=570,height=420, scrollbars=yes, resizable=yes");  
 		});
 		
-		$('#pwd').focus(function() {
-			$(this).val('');	
-		});
-		
 		$('#pwd_view').keyup(function() {
 			var tpwd = $(this).val();
 			var pwd = $('#pwd').val();
@@ -185,22 +253,38 @@
 			} else if(tpwd.length > 1) {
 				$('#pwd').val(pwd + tpwd.substring(tpwd.length - 1));
 			}
-			var reg1 = /^.*[a-zA-Z0-9!@#$%^&*]$/;
+			var reg1 = /^[a-zA-Z0-9!@#$%^&*]*$/;
 			if(!reg1.test(tpwd)) {
 				alert('영어 대소문자, 숫자, 특수문자!@#$%^&*만 사용가능합니다.');
-				$(this).val('');
+				setTimeout(function() { 
+					$('#pwd_view').focus(); 
+				}, 10)
 				return
 			}
-			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9]/g, '*') + tpwd.substring(tpwd.length - 1);
+			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9!@#$%^&*]/g, '*') + tpwd.substring(tpwd.length - 1);
 			if(tpwd.length > 1) {
 				$(this).val(spwd);				
 			}
 			
-			$('#pwd_view').blur(function() {
-				var tpwd = $(this).val();
-				var fpwd = tpwd.replace(/[a-zA-Z0-9]/g, '*')
-				$(this).val(fpwd);
-			});
+		});
+		
+		$('#pwd_view').blur(function() {
+			var tpwd = $(this).val();
+			var fpwd = tpwd.replace(/[a-zA-Z0-9]/g, '*')
+			var pwd = $('#pwd').val();
+			var pwd_reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,15}$/;
+			if(pwd != "" && !pwd_reg.test(pwd)) {
+				alert('영어 대소문자, 숫자, 특수문자!@#$%^&*중 하나 포함 최소 8글자 최대 15글자만 됩니다.');
+				$('#pwd_view').val('');
+				$('#pwd').val('');
+				setTimeout(function() { 
+					$('#pwd_view').focus(); 
+				}, 10);
+				return 
+			}
+			var tpwd = $(this).val();
+			var fpwd = tpwd.replace(/[a-zA-Z0-9!@#$%^&*]/g, '*');
+			$(this).val(fpwd);
 		});
 		
 		$('#repwd_view').keyup(function() {
@@ -211,26 +295,29 @@
 			} else if(tpwd.length > 1) {
 				$('#repwd').val(repwd + tpwd.substring(tpwd.length - 1));
 			}
-			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9]/g, '*') + tpwd.substring(tpwd.length - 1);
+			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9!@#$%^&*]/g, '*') + tpwd.substring(tpwd.length - 1);
 			if(tpwd.length > 1) {
 				$(this).val(spwd);				
 			}
 			
-			$('#repwd_view').blur(function() {
-				var pwd = $('#pwd').val();
-				var repwd = $('#repwd').val().trim();
-				if(repwd) {
-					if(!(pwd == repwd)) {
-						$('#repwd_view').val('');
-						$('#repwd').val('');
-						$('#repwd_view').focus();
-						return
-					}
+		});
+		$('#repwd_view').blur(function() {
+			var pwd = $('#pwd').val();
+			var repwd = $('#repwd').val().trim();
+			if(repwd) {
+				if(!(pwd == repwd)) {
+					alert('비밀번호가 일치하지 않습니다.')
+					$('#repwd_view').val('');
+					$('#repwd').val('');
+					setTimeout(function() { 
+						$('#repwd_view').focus(); 
+					}, 10);
+					return
 				}
-				var tpwd = $(this).val();
-				var fpwd = tpwd.replace(/[a-zA-Z0-9]/g, '*');
-				$(this).val(fpwd);
-			});
+			}
+			var tpwd = $(this).val();
+			var fpwd = tpwd.replace(/[a-zA-Z0-9!@#$%^&*]/g, '*');
+			$(this).val(fpwd);
 		});
 		
 		$('#reg_no_view').keyup(function() {
@@ -250,6 +337,15 @@
 		$('#reg_no_view').blur(function() {
 			var treg_no = $(this).val();
 			var freg_no = treg_no.replace(/[0-9]/g, '*')
+			var reg_no = $('#reg_no').val();
+			var reg_no_reg = /^[0-9]{13}$/;
+			if(treg_no != "" && !reg_no_reg.test(reg_no)) {
+				alert('13자리 숫자를 입력해주세요');
+				setTimeout(function() { 
+					$('#reg_no_view').val('');
+					$('#reg_no_view').focus(); 
+				}, 10)
+			}
 			$(this).val(freg_no);
 			var today = new Date();
 			var full_year = today.getFullYear() + "";
@@ -287,11 +383,126 @@
 			var mil_end = $(this).val().replaceAll('-', '');
 			if(mil_start > mil_end) {
 				alert('전역일이 입대일보다 전입니다.');
-				$('#mil_enddate').val('');
+				setTimeout(function() { 
+					$('#mil_enddate').focus(); 
+				}, 10)
 				return
 			}
 		});
-
+		
+		$('#name').blur(function() {
+			var name = $('#name').val();
+			var name_reg = /^[가-힣]{2,}$/;
+			if(name != "" && !name_reg.test(name)) {
+				alert('최소2글자, 한글만 사용 가능합니다');
+				setTimeout(function() { 
+					$('#name').focus(); 
+				}, 10);
+				return 
+			}
+		});
+		
+		$('#eng_name').blur(function() {
+			var eng_name = $('#eng_name').val();
+			var eng_name_reg = /^[a-zA-Z]*$/;
+			if(eng_name != "" && !(eng_name_reg.test(eng_name))) {
+				alert('영어 대소문자만 사용 가능합니다.');
+				setTimeout(function() { 
+					$('#eng_name').focus(); 
+				}, 10);
+				return 
+			} 
+		});
+		
+		$('#phone').focus(function() {
+			var phone = $('#phone').val()
+			$('#phone').val(phone.replaceAll('-', ''));
+		});
+		
+		$('#phone').blur(function() {
+			var phone = $('#phone').val();
+			var phone_reg = /^[0-9]{9,11}$/;
+			if(phone != "" && !phone_reg.test(phone)) {
+				alert('- 없이 숫자만 입력해야합니다.');
+				setTimeout(function() { 
+					$('#phone').focus(); 
+				}, 10)
+			} else {
+				$('#phone').val(autoHypenTel(phone));
+			}
+		});
+		
+		$('#hp').focus(function() {
+			var hp = $('#hp').val()
+			$('#hp').val(hp.replaceAll('-', ''));
+		});
+		
+		$('#hp').blur(function() {
+			var hp = $('#hp').val();
+			var hp_reg = /^[0-9]{11}$/;
+			if(hp != "" && !hp_reg.test(hp)) {
+				alert('- 없이 11자리 숫자를 입력하세요.');
+				setTimeout(function() { 
+					$('#hp').focus(); 
+				}, 10)
+			} else {
+				$('#hp').val(autoHypenTel(hp));
+			}
+		});
+		
+		$('#years').blur(function() {
+			var years = $('#years').val();
+			var years_reg = /^[0-9]{11}$/;
+			if(years != "" && !years_reg.test(years)) {
+				alert('숫자만 입력하세요.');
+				setTimeout(function() { 
+					$('#years').focus(); 
+				}, 10)
+			}
+		});
+		
+		$('#email_id').blur(function() {
+			var email = $('#email_id').val();
+			var email_reg = /^[a-zA-Z0-9]*$/;
+			if(email != "" && !email_reg.test(email)) {
+				alert('영어대소문자, 숫자만 입력하세요');
+				setTimeout(function() { 
+					$('#email_id').focus(); 
+				}, 10)
+			}
+		});
+		
+		$('#zip').blur(function() {
+			var zip = $('#zip').val();
+			var zip_reg = /^[0-9]{5}$/;
+			if(zip != "" && !zip_reg.test(zip)) {}
+			alert('숫자만 입력하세요');
+			setTimeout(function() { 
+				$('#zip').focus(); 
+			}, 10)
+		});
+		
+		$('#cmp_reg_no').focus(function() {
+			var cmp_no = $('#cmp_reg_no').val().replaceAll('-', '');
+			$('#cmp_reg_no').val(cmp_no);
+		});
+		
+		$('#cmp_reg_no').blur(function() {
+			var cmp_no = $('#cmp_reg_no').val();
+			var cmp_no_reg = /^[0-9]{10}$/;
+			if(cmp_no != "" && !(cmp_no_reg.test(cmp_no))) {
+				alert('- 없이 10자리 숫자를 입력하세요');
+			} else {
+				var tmp = "";
+				tmp += cmp_no.substr(0, 2);
+				tmp += '-';
+				tmp += cmp_no.substr(2, 3);
+				tmp += '-';
+				tmp += cmp_no.substr(5);
+				$('#cmp_reg_no').val(tmp);
+			}
+		});
+		
 		$('#sbtn').click(function() {
 			var salary = $('#salary').val();
 			var zip = $('#zip').val();
@@ -304,12 +515,14 @@
 			var hp = $('#hp').val();
 			var email = $('#email').val();
 			var join_day = $('#join_day').val();
+			var pr_image = $('#profile_image').val();
+			var cmp_image = $('#cmpfile').val();
+			var cr_image = $('#crfile').val();
 			
-			/*
 			if(!(name && id && pwd && hp && email && join_day)) {
 				alert('필수 입력 내용을 확인하세요');
 				return
-			} */
+			}
 			
 			if(!salary) {
 				$('#salary').prop('disabled', true);
@@ -329,8 +542,21 @@
 				$('#retire_day').prop('disabled', true);
 			}
 			
-			var data = new FormData($('#frm')[0]);
+			if(!pr_image) {
+				$('#profile_image').prop('disabled', true);
+			}
 			
+			if(!cmp_image) {
+				$('#cmpfile').prop('disabled', true);
+				$('#cmp_image_name').prop('disabled', true);
+			}
+			
+			if(!cr_image) {
+				$('#crfile').prop('disabled', true);
+				$('#carrier_image_name').prop('disabled', true);
+			}
+			
+			var data = new FormData($('#frm')[0]);
 			$.ajax({ 
 				url: '/insa/empRegProc.insa',
 				data: data, 
@@ -338,24 +564,34 @@
 				contentType: false,
 				type: 'POST', 
 				success: function(data) { 
-					if(data.result == "OK") {
+					if(data.result == "IN") {
+						alert("등록 완료");
+					} else if(data.result == "UP") {
 						alert("저장 완료");
-						var salary = $('#salary').val();
-						if(salary.length == 4) {
-							salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
-						} else if(salary.length == 8) {
-							salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
-						}
-						$('#salary').val(salary);
 					} else {
-						alert("저장 실패");
+						alert("실패");
 					}
 				},
 				error: function() {
 					alert('####### 통신 에러 #######');
 				}
 			});
-
+			
+			if(salary.length == 4) {
+				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");				
+			} else if(salary.length == 8) {
+				salary = salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
+			}
+			$('#salary').val(salary);
+			$('#salary').prop('disabled', false);
+			$('#zip').prop('disabled', false);
+			$('#years').prop('disabled', false);
+			$('#retire_day').prop('disabled', false);
+			$('#profile_image').prop('disabled', false);
+			$('#cmpfile').prop('disabled', false);
+			$('#cmp_image_name').prop('disabled', false);
+			$('#crfile').prop('disabled', false);
+			$('#carrier_image_name').prop('disabled', false);
 		});
 	});
 </script>
@@ -403,24 +639,24 @@
 					<label for="id" class="mgr30">*아이디</label>
 					<input type="text" class="mgr30" name="id" id="id">
 					<label for="pwd_view" class="w3-center mgr30 ">*패스워드</label>
-					<input type="text" class="mgr30" name="pwd_view" id="pwd_view"">
+					<input type="text" class="mgr30 w3-right-align" name="pwd_view" id="pwd_view"">
 					<input type="hidden" name="pwd" id="pwd">
 					<label for="repwd_view" class="w3-center mgr30">*패스워드확인</label>
-					<input type="text" id="repwd_view">
+					<input type="text" class="w3-right-align" id="repwd_view">
 					<input type="hidden" name="repwd" id="repwd">
 				</div>
 				<div class="mgb10">
 					<label for="phone" class="mgr30">전화번호</label>
-					<input type="text" class="mgr30" name="phone" id="phone">
+					<input type="text" class="mgr30 w3-right-align" name="phone" id="phone">
 					<label for="hp" class="mgr30">*핸드폰번호</label>
-					<input type="text" class="mgr30" name="hp" id="hp">
+					<input type="text" class="mgr30 w3-right-align" name="hp" id="hp">
 					<label for="reg_no_view" class="mgr30">주민번호</label>
-					<input type="text" id="reg_no_view">
+					<input type="text" class="w3-right-align" id="reg_no_view">
 					<input type="hidden" name="reg_no" id="reg_no">
 				</div>
 				<div class="mgb10">
 					<label for="years" class="mgr30">연령</label>
-					<input type="text" class="mgr30" name="years" id="years">
+					<input type="text" class="mgr30 w3-right-align" name="years" id="years">
 					<label for="email" class="mgr30">*이메일</label>
 					<input type="text" class="mgr30 w150" name="email_id" id="email_id">
 					<select class="w180 mgr20" id="email_addr">
@@ -432,21 +668,21 @@
 					<label for="join_gbn_code" class="mgr30">직종체크</label>
 					<select class="w180 mgr20" name="join_gbn_code" id="join_gbn_code">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="0" end="7">
+				<c:forEach var="data" items="${LIST1}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="sex" class="mgr30">성별</label>
 					<select class="w180" name="sex" id="sex">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="8" end="9">
+				<c:forEach var="data" items="${LIST2}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 				</div>
 				<div class="mgb10">
 					<label for="zip" class="mgr30">주소</label>
-					<input type="text" class="w150 mgr40" placeholder="우편번호" name="zip" id="zip">
+					<input type="text" class="w150 mgr40 w3-right-align" placeholder="우편번호" name="zip" id="zip">
 					<input class="w80 mgr30 bgcw" type="button" id="saddr" value="주소검색">
 					<input type="text" class="w480 mgr20" placeholder="주소" name="addr1" id="addr1">
 					<input type="text" class="w480" placeholder="세부주소" name="addr2" id="addr2">
@@ -455,19 +691,19 @@
 					<label for="pos_gbn_code" class="mbr5 pdr30">직위</label>
 					<select name="pos_gbn_code" id="pos_gbn_code">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="10" end="19">
+				<c:forEach var="data" items="${LIST3}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="dept_code" class="pdr30">부서</label>
 					<select name="dept_code" id="dept_code">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="20" end="28">
+				<c:forEach var="data" items="${LIST4}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="salary" class="pdr30" >연봉(만원)</label>
-					<input type="text" class="phalign w3-right-text" name="salary" id="salary" placeholder="(만원)">
+					<input type="text" class="phalign w3-right-align" name="salary" id="salary" placeholder="(만원)">
 				</div>
 			</div>
 		</div>
@@ -476,28 +712,28 @@
 					<label for="join_type" class="mbr5 pdr30">입사구분</label>
 					<select class="mgr30" name="join_type" id="join_type">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="29" end="30">
+				<c:forEach var="data" items="${LIST5}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="gart_level" class="pdr30">등급</label>
 					<select class="mgr30" name="gart_level" id="gart_level">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="31" end="33">
+				<c:forEach var="data" items="${LIST6}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="put_yn" class="pdr30">투입여부</label>
 					<select class="mgr30" name="put_yn">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="34" end="35">
+				<c:forEach var="data" items="${LIST7}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_yn" class="pdr30">군필여부</label>
 					<select class="mgr30" name="mil_yn" id="mil_yn">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="36" end="37">
+				<c:forEach var="data" items="${LIST8}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
@@ -506,49 +742,49 @@
 					<label for="mil_type" class="mbr5 pdr30 mil">군별</label>
 					<select class="mgr30" name="mil_type" id="mil_type">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="38" end="40">
+				<c:forEach var="data" items="${LIST9}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_level" class="pdr30 mil">계급</label>
 					<select class="mgr30" name="mil_level" id="mil_level">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="41" end="44">
+				<c:forEach var="data" items="${LIST10}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_startdate" class="pdr30">입영일자</label>
-					<input type="text" name="mil_startdate" id="mil_startdate">
+					<input type="text" name="mil_startdate" id="mil_startdate" readonly="readonly">
 					<label for="mil_enddate" class="pdr30">전역일자</label>
-					<input type="text" name="mil_enddate" id="mil_enddate">
+					<input type="text" name="mil_enddate" id="mil_enddate" readonly="readonly">
 			</div>
 			<div class="mgl80 mgb20">
 					<label for="kosa_reg_yn" class="mbr5 pdr30">KOSA등록</label>
 					<select class="mgr30" name="kosa_reg_yn" id="kosa_reg_yn">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="45" end="46">
+				<c:forEach var="data" items="${LIST11}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="kosa_class_code" class="pdr30">KOSA등급</label>
 					<select class="mgr30" name="kosa_class_code" id="kosa_class_code">
 						<option></option>
-				<c:forEach var="data" items="${LIST}" begin="47" end="50">
+				<c:forEach var="data" items="${LIST12}">
 						<option value="${data.code}">${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="join_day" class="pdr30">*입사일자</label>
-					<input type="text" name="join_day" id="join_day">
+					<input type="text" name="join_day" id="join_day" readonly="readonly">
 					<label for="retire_day" class="pdr30">퇴사일자</label>
-					<input type="text" name="retire_day" id="retire_day">
+					<input type="text" name="retire_day" id="retire_day" readonly="readonly">
 			</div>
 			<div class="mgl80 mgb20">
-					<label for="cmp_reg_no" class="mbr5 pdr30">사업자번호</label>
-					<input type="text" name="cmp_reg_no" id="cmp_reg_no">
+					<label for="cmp_reg_no" class="mbr5 pdr30 ">사업자번호</label>
+					<input type="text" class="w3-right-align" name="cmp_reg_no" id="cmp_reg_no">
 					<label for="crm_name" class="pdr30">업체명</label>
 					<input type="text" name="crm_name" id="crm_name">
 					<label for="cmp_reg_image" class="pdr30">사업자등록증</label>
-					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name">
+					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name" readonly="readonly">
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="cmp_img">
 					<input type="button" class="inblock w150 bgcw" value="등록" id="cmpbtn">
 					<input type="file" class="w3-hide" name="cmp_reg_image" id="cmpfile" onchange="cmpfileURL(this);"
@@ -556,9 +792,10 @@
 			</div>
 			<div class="mgl80 mgb20">
 					<label for="self_intro" class="mbr5 pdr30">자기소개</label>
-					<textarea rows="2" cols="80" name="self_intro" id="self_intro"></textarea>
+					<textarea rows="2" cols="80" name="self_intro" id="self_intro" 
+							placeholder="100자 내외로 적으시오." maxlength="110"></textarea>
 					<label class="mbr5 pdr30">이력서</label>
-					<input type="text" id="carrier_image_name" name="carrier_image_name" >
+					<input type="text" id="carrier_image_name" name="carrier_image_name" readonly="readonly">
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="self_img">
 					<input type="button" class="inblock w150 bgcw" value="파일업로드" id="crbtn">
 					<input type="file" class="w3-hide" name="carrier_image" id="crfile" onchange="crfileURL(this);"
@@ -568,13 +805,13 @@
 	</form>
 	
 	<div id="modal01" class="w3-modal" onclick="this.style.display='none'">
-    	<div class="w3-modal-content w3-animate-zoom">
+    	<div class="w3-modal-content w3-animate-zoom mxw550">
       		<img id="crfile_img" style="width:100%">
     	</div>
   	</div>
   	
   	<div id="modal02" class="w3-modal" onclick="this.style.display='none'">
-    	<div class="w3-modal-content w3-animate-zoom">
+    	<div class="w3-modal-content w3-animate-zoom mxw550">
       		<img id="cmpfile_img" style="width:100%">
     	</div>
   	</div>

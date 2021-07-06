@@ -20,21 +20,131 @@
 			id = #{id}
 	</select>
 	
-	<select id="comCodeSel" resultType="iVO">
+	<select id="idUpCheck" resultType="iVO" parameterType="string">
+		SELECT
+			id, sabun
+		FROM
+			insa
+		WHERE
+			id = #{id}
+	</select>
+	
+	<select id="joinGbnCodeSel" resultType="iVO">
 		SELECT
 			code, name
 		FROM
-			insa_com			
+			insa_com
+		WHERE
+			gubun = 'join_gbn'			
 	</select>
-
+	
+	<select id="sexCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'sex'			
+	</select>
+	
+	<select id="posGbnCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'pos_gbn'			
+	</select>
+	
+	<select id="deptCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'dept'			
+	</select>
+	
+	<select id="joinTypeCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'join_type'			
+	</select>
+	
+	<select id="gartLvCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'gart_level'			
+	</select>
+	
+	<select id="putCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'put_yn'			
+	</select>
+	
+	<select id="milCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'mil_yn'			
+	</select>
+	
+	<select id="milTypeCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'mil_type'			
+	</select>
+	
+	<select id="milLvCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'mil_level'			
+	</select>
+	
+	<select id="kosaCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'kosa_reg_yn'			
+	</select>
+	
+	<select id="kosaClsCodeSel" resultType="iVO">
+		SELECT
+			code, name
+		FROM
+			insa_com
+		WHERE
+			gubun = 'kosa_class'			
+	</select>
+	
 	<insert id="empregProc" parameterType="iVO">
 		INSERT INTO 
 			insa(sabun, name, id, pwd, hp, email, join_day, retire_day, put_yn, reg_no, eng_name, phone, 
 				 carrier, pos_gbn_code, cmp_reg_no, sex, years, zip, addr1, addr2, dept_code, salary, kosa_reg_yn,
 				 kosa_class_code, mil_yn, mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level,
-				 self_intro, crm_name)
+				 self_intro, crm_name, profile_image, carrier_image, cmp_reg_image)
 		VALUES(
-    		#{sabun}, #{name}, #{id}, #{pwd}, #{hp}, #{email}, #{join_day, jdbcType=DATE}, #{retire_day, jdbcType=DATE},
+    		#{sabun}, #{name}, #{id}, #{pwd}, #{hp}, #{email}, #{join_day}, #{retire_day, jdbcType=DATE},
     		#{put_yn, jdbcType=VARCHAR}, #{reg_no, jdbcType=VARCHAR}, #{eng_name, jdbcType=VARCHAR},
     		#{phone, jdbcType=VARCHAR}, #{carrier, jdbcType=VARCHAR}, #{pos_gbn_code, jdbcType=VARCHAR},
     		#{cmp_reg_no, jdbcType=VARCHAR}, #{sex, jdbcType=VARCHAR}, #{years, jdbcType=INTEGER},
@@ -43,7 +153,8 @@
     		#{kosa_class_code, jdbcType=VARCHAR}, #{mil_yn, jdbcType=VARCHAR}, #{mil_type, jdbcType=VARCHAR},
     		#{mil_level, jdbcType=VARCHAR}, #{mil_startdate, jdbcType=VARCHAR}, #{mil_enddate, jdbcType=VARCHAR},
     		#{join_type, jdbcType=VARCHAR}, #{gart_level, jdbcType=VARCHAR}, #{self_intro, jdbcType=VARCHAR},
-    		#{crm_name, jdbcType=VARCHAR}
+    		#{crm_name, jdbcType=VARCHAR}, #{profile_image_name, jdbcType=VARCHAR},
+    		#{carrier_image_name, jdbcType=VARCHAR}, #{cmp_reg_image_name, jdbcType=VARCHAR}
 		)
 	</insert>
 	
@@ -55,4 +166,55 @@
 			#{sabun}, #{oriname}, #{savename}, #{dir}
 		)
 	</insert>
+	
+	<select id="sabunCheck" resultType="int" parameterType="int">
+		SELECT
+			count(*)
+		FROM
+			insa
+		WHERE
+			sabun = #{sabun}
+	</select>
+	
+	<update id="empregProc2" parameterType="iVO">
+		UPDATE
+			insa
+		SET	
+			name = #{name},
+			id = #{id},
+			pwd = #{pwd},
+			hp = #{hp},
+			email = #{email},
+			join_day = #{join_day},
+			retire_day = #{retire_day, jdbcType=DATE},
+			put_yn = #{put_yn, jdbcType=VARCHAR},
+			reg_no = #{reg_no, jdbcType=VARCHAR},
+			eng_name = #{eng_name, jdbcType=VARCHAR},
+			phone = #{phone, jdbcType=VARCHAR}, 
+			carrier = #{carrier, jdbcType=VARCHAR},
+			pos_gbn_code = #{pos_gbn_code, jdbcType=VARCHAR},
+			cmp_reg_no = #{cmp_reg_no, jdbcType=VARCHAR},
+			sex = #{sex, jdbcType=VARCHAR},
+			years = #{years, jdbcType=INTEGER},
+			zip = #{zip, jdbcType=INTEGER},
+			addr1 = #{addr1, jdbcType=VARCHAR},
+			addr2 = #{addr2, jdbcType=VARCHAR},
+			dept_code = #{dept_code, jdbcType=VARCHAR},
+			salary = #{salary, jdbcType=INTEGER},
+			kosa_reg_yn = #{kosa_reg_yn, jdbcType=VARCHAR},
+			kosa_class_code = #{kosa_class_code, jdbcType=VARCHAR},
+			mil_yn = #{mil_yn, jdbcType=VARCHAR},
+			mil_type = #{mil_type, jdbcType=VARCHAR},
+			mil_level = #{mil_level, jdbcType=VARCHAR},
+			mil_startdate = #{mil_startdate, jdbcType=VARCHAR},
+			mil_enddate = #{mil_enddate, jdbcType=VARCHAR},
+			join_type = #{join_type, jdbcType=VARCHAR},
+			gart_level = #{gart_level, jdbcType=VARCHAR},
+			self_intro = #{self_intro, jdbcType=VARCHAR},
+			crm_name = #{crm_name, jdbcType=VARCHAR}
+		WHERE
+    		sabun = #{sabun}
+	</update>
+	
+	
 </mapper>

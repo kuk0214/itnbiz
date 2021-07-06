@@ -30,22 +30,50 @@ public class Main {
 	@RequestMapping("/empReg.insa")
 	public ModelAndView empReg(ModelAndView mv) {
 		int sabun = iDao.selSabun();
-		List list = iDao.comCodeSel();
+		List list1 = iDao.joinGbnCodeSel();
+		List list2 = iDao.sexCodeSel();
+		List list3 = iDao.posGbnCodeSel();
+		List list4 = iDao.deptCodeSel();
+		List list5 = iDao.joinTypeCodeSel();
+		List list6 = iDao.gartLvCodeSel();
+		List list7 = iDao.putCodeSel();
+		List list8 = iDao.milCodeSel();
+		List list9 = iDao.milTypeCodeSel();
+		List list10 = iDao.milLvCodeSel();
+		List list11 = iDao.kosaCodeSel();
+		List list12 = iDao.kosaClsCodeSel();
 		mv.addObject("sabun", sabun);
-		mv.addObject("LIST", list);
+		mv.addObject("LIST1", list1);
+		mv.addObject("LIST2", list2);
+		mv.addObject("LIST3", list3);
+		mv.addObject("LIST4", list4);
+		mv.addObject("LIST5", list5);
+		mv.addObject("LIST6", list6);
+		mv.addObject("LIST7", list7);
+		mv.addObject("LIST8", list8);
+		mv.addObject("LIST9", list9);
+		mv.addObject("LIST10", list10);
+		mv.addObject("LIST11", list11);
+		mv.addObject("LIST12", list12);
 		return mv;
 	}
 	
 	@RequestMapping("/idCheck.insa")
 	@ResponseBody
-	public HashMap<String, String> idCheck(String id) {
+	public HashMap<String, String> idCheck(String id, int sabun) {
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("result", "NO");
+
 		int cnt = iDao.idCheck(id);
 		if(cnt == 0) {
 			map.put("result", "OK");
+		} else {
+			InsaVO iVO = iDao.idUpCheck(id);
+			if(iVO.getSabun() == sabun) {
+				map.put("result", "UP");
+			}
 		}
-		
+
 		return map;
 	}
 	
@@ -57,10 +85,23 @@ public class Main {
 	@RequestMapping("/empRegProc.insa")
 	@ResponseBody
 	public HashMap<String, Object> empRegProc(MultipartHttpServletRequest multi) {
+		MultipartFile pr = multi.getFile("profile_image");
 		MultipartFile cmp = multi.getFile("cmp_reg_image");
 		MultipartFile cr = multi.getFile("carrier_image");
-		MultipartFile[] files = {cmp, cr};
-		System.out.println("파일 이름 : " + cr.getOriginalFilename());
+		MultipartFile[] files = null;
+		if(pr != null) {
+			if(cmp != null) {
+				files = new MultipartFile[] {pr, cmp, cr};
+			} else {
+				files = new MultipartFile[] {pr, cr};
+			}
+		} else {
+			if(cmp != null) {
+				files = new MultipartFile[] {cmp, cr};
+			} else {
+				files = new MultipartFile[] {cr};
+			}
+		}
 		InsaVO iVO = new InsaVO();
 		if(multi.getParameter("salary") != null) {
 			iVO.setSalary(Integer.parseInt(multi.getParameter("salary")));
@@ -70,6 +111,15 @@ public class Main {
 		}
 		if(multi.getParameter("zip") != null) {
 			iVO.setZip(Integer.parseInt(multi.getParameter("zip")));
+		}
+		if(multi.getParameter("carrier_image_name") != null) {
+			iVO.setCarrier_image_name(multi.getParameter("carrier_image_name"));
+		}
+		if(multi.getParameter("cmp_reg_image_name") != null) {
+			iVO.setCmp_reg_image_name(multi.getParameter("cmp_reg_image_name"));
+		}
+		if(pr != null) {
+			iVO.setProfile_image_name(pr.getOriginalFilename());
 		}
 		iVO.setName(multi.getParameter("name"));
 		iVO.setSabun(Integer.parseInt(multi.getParameter("sabun")));
@@ -104,18 +154,32 @@ public class Main {
 		if(multi.getParameter("retire_day") != null) {
 			iVO.setRetire_day(java.sql.Date.valueOf(multi.getParameter("retire_day")));
 		}
-		int cnt = iDao.empregProc(iVO);
-		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("result", "NO");
-		ArrayList<InsaVO> list = null;
-		if(cnt == 1) {
-			map.put("result", "OK");
-			list = fUtil.saveProc(files, iVO.getSabun(), "/img/upload/");
-			for(InsaVO vo : list) {
-				iDao.addInsaFile(vo);
+		int no = iDao.sabunCheck(iVO.getSabun());
+		if(no == 0) {
+			int cnt = iDao.empregProc(iVO);
+			
+			ArrayList<InsaVO> list = null;
+			if(cnt == 1) {
+				map.put("result", "IN");
+				list = fUtil.saveProc(files, iVO.getSabun(), "/img/upload/");
+				for(InsaVO vo : list) {
+					iDao.addInsaFile(vo);
+				}
+			}
+		} else {
+			int cnt = iDao.empregProc2(iVO);
+
+			if(cnt == 1) {
+				map.put("result", "UP");
 			}
 		}
 		return map;
+	}
+	
+	@RequestMapping("/insaListForm")
+	public ModelAndView insaListForm(ModelAndView mv) {
+		return mv;
 	}
 }

@@ -14,7 +14,7 @@
 		});
 		
 		$('#selbtn').click(function() {
-			$(location).attr('href', '/insa/selemp.insa');
+			$(location).attr('href', '/insa/insaListForm.insa');
 		});
 	});
 </script>
