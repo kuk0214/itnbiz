@@ -318,6 +318,10 @@ select {
 	background-color: white;
 }
 
+.bgcg {
+	background-color: #E2E2E2;
+}
+
 .phalign::-webkit-input-placeholder {
 	text-align: right;
 	margin-right: 10px;

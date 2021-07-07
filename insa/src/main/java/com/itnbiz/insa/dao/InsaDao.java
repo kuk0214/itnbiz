@@ -110,4 +110,19 @@ public class InsaDao {
 	public int addInsaFlie2(InsaVO iVO) {
 		return sqlSession.update("iSQL.addInsaFile2", iVO);
 	}
-}
+	
+	// 사원 리스트 조회 데이터베이스 전담 처리함수
+	public List insaListSel(InsaVO iVO) {
+		return sqlSession.selectList("iSQL.insaListSel", iVO);
+	}
+	
+	// 사원 리스트 수 조회 데이터베이스 전담 처리함수
+	public int insaSelCnt(InsaVO iVO) {
+		return sqlSession.selectOne("iSQL.insaSelCnt", iVO);
+	}
+	
+	// 사원 상세정보 조회 데이터베이스 전담 처리함수
+	public InsaVO insaDetail(int sabun) {
+		return sqlSession.selectOne("iSQL.insaDetail", sabun);
+	}
+} 

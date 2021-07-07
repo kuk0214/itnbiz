@@ -9,4 +9,5 @@
 						https://www.springframework.org/schema/context/spring-context.xsd">
 	
 	<bean id="fUtil" class="com.itnbiz.insa.util.FileUtil" />
+	<bean id="page" class="com.itnbiz.insa.util.PageUtil" />
 </beans>

@@ -4,7 +4,6 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.itnbiz.insa.dao.InsaDao;
 import com.itnbiz.insa.util.FileUtil;
+import com.itnbiz.insa.util.PageUtil;
 import com.itnbiz.insa.vo.InsaVO;
 
 @Controller
@@ -179,7 +179,58 @@ public class Main {
 	}
 	
 	@RequestMapping("/insaListForm")
-	public ModelAndView insaListForm(ModelAndView mv) {
+	public ModelAndView insaListForm(PageUtil page, InsaVO iVO, ModelAndView mv) {
+		int nowPage = page.getNowPage();
+		if(nowPage == 0) {
+			nowPage = 1;
+		}
+		int selCnt = iDao.insaSelCnt(iVO);
+		page.setPage(nowPage, selCnt, 10, 5);
+		iVO.setPage(page);
+		List<InsaVO> list = iDao.insaListSel(iVO);
+		List list1 = iDao.joinGbnCodeSel();
+		List list2 = iDao.posGbnCodeSel();
+		List list3 = iDao.joinTypeCodeSel();
+		List list4 = iDao.putCodeSel();
+		mv.addObject("LIST", list);
+		mv.addObject("LIST1", list1);
+		mv.addObject("LIST2", list2);
+		mv.addObject("LIST3", list3);
+		mv.addObject("LIST4", list4);
+		mv.addObject("PAGE", page);
+		mv.addObject("DATA", iVO);
+		return mv;
+	}
+	
+	@RequestMapping("/insaDetail.insa")
+	public ModelAndView insaDetail(int sabun, int nowPage, ModelAndView mv) {
+		InsaVO iVO = iDao.insaDetail(sabun);
+		List list1 = iDao.joinGbnCodeSel();
+		List list2 = iDao.sexCodeSel();
+		List list3 = iDao.posGbnCodeSel();
+		List list4 = iDao.deptCodeSel();
+		List list5 = iDao.joinTypeCodeSel();
+		List list6 = iDao.gartLvCodeSel();
+		List list7 = iDao.putCodeSel();
+		List list8 = iDao.milCodeSel();
+		List list9 = iDao.milTypeCodeSel();
+		List list10 = iDao.milLvCodeSel();
+		List list11 = iDao.kosaCodeSel();
+		List list12 = iDao.kosaClsCodeSel();
+		mv.addObject("DATA", iVO);
+		mv.addObject("nowPage", nowPage);
+		mv.addObject("LIST1", list1);
+		mv.addObject("LIST2", list2);
+		mv.addObject("LIST3", list3);
+		mv.addObject("LIST4", list4);
+		mv.addObject("LIST5", list5);
+		mv.addObject("LIST6", list6);
+		mv.addObject("LIST7", list7);
+		mv.addObject("LIST8", list8);
+		mv.addObject("LIST9", list9);
+		mv.addObject("LIST10", list10);
+		mv.addObject("LIST11", list11);
+		mv.addObject("LIST12", list12);
 		return mv;
 	}
 }

@@ -475,12 +475,11 @@
 		$('#zip').blur(function() {
 			var zip = $('#zip').val();
 			var zip_reg = /^[0-9]{5}$/;
-			if(zip != "" && !zip_reg.test(zip)) {
-				alert('숫자만 입력하세요');
-				setTimeout(function() { 
-					$('#zip').focus(); 
-				}, 10)
-			}
+			if(zip != "" && !zip_reg.test(zip)) {}
+			alert('숫자만 입력하세요');
+			setTimeout(function() { 
+				$('#zip').focus(); 
+			}, 10)
 		});
 		
 		$('#cmp_reg_no').focus(function() {
@@ -606,9 +605,9 @@
 	<div class="w3-margin-top w3-margin-bottom">
 		<span class="mgl40 ft20">직원 상세 정보</span>
 		<div class="inblock w3-right mgr40">
-			<div class="w3-third w3-button w3-black" id="sbtn">저장</div>
-			<div class="w3-third w3-button w3-black" id="rbtn">신규</div>
-			<div class="w3-third w3-button w3-black" id="pbtn">이전</div>
+			<div class="w3-third w3-button w3-black" id="ebtn">수정</div>
+			<div class="w3-third w3-button w3-black" id="dbtn">삭제</div>
+			<input type="button" class="w3-third w3-button w3-black" value="이전" onclick="history.back()">
 		</div>
 	</div>
 	<form method="POST" name="frm" id="frm" enctype="multipart/form-data">
@@ -625,39 +624,39 @@
 				<div class="mgb10 inblock">
 					<div class="inblock">
 						<label class="mgr30"">*사번</label>
-						<input type="text" class="mgr30 w3-right-align bgcg" readonly="readonly" value="${sabun}" name="sabun" id="sabun">
+						<input type="text" class="mgr30 w3-right-align bgcg" readonly="readonly" value="${DATA.sabun}" name="sabun" id="sabun">
 					</div>
 					<div class="inblock mgr30">
 						<label for="name" class="mgr30">*한글성명</label>
-						<input type="text" name="name" id="name">
+						<input type="text" name="name" id="name" value="${DATA.name}">
 					</div>
 					<div class="inblock">
 						<label for="eng_name" class="mgr30">영문성명</label>
-						<input type="text" name="eng_name" id="eng_name">
+						<input type="text" name="eng_name" id="eng_name" value="${DATA.eng_name}">
 					</div>
 				</div>
 				<div class="mgb10">
 					<label for="id" class="mgr30">*아이디</label>
-					<input type="text" class="mgr30" name="id" id="id">
+					<input type="text" class="mgr30" name="id" id="id" value="${DATA.id}">
 					<label for="pwd_view" class="w3-center mgr30 ">*패스워드</label>
-					<input type="text" class="mgr30 w3-right-align" name="pwd_view" id="pwd_view"">
-					<input type="hidden" name="pwd" id="pwd">
+					<input type="text" class="mgr30 w3-right-align" name="pwd_view" id="pwd_view" value="${DATA.pwd}">
+					<input type="hidden" name="pwd" id="pwd" value="${DATA.pwd}">
 					<label for="repwd_view" class="w3-center mgr30">*패스워드확인</label>
 					<input type="text" class="w3-right-align" id="repwd_view">
 					<input type="hidden" name="repwd" id="repwd">
 				</div>
 				<div class="mgb10">
 					<label for="phone" class="mgr30">전화번호</label>
-					<input type="text" class="mgr30 w3-right-align" name="phone" id="phone">
+					<input type="text" class="mgr30 w3-right-align" name="phone" id="phone" value="${DATA.phone}">
 					<label for="hp" class="mgr30">*핸드폰번호</label>
-					<input type="text" class="mgr30 w3-right-align" name="hp" id="hp">
+					<input type="text" class="mgr30 w3-right-align" name="hp" id="hp" value="${DATA.hp}">
 					<label for="reg_no_view" class="mgr30">주민번호</label>
-					<input type="text" class="w3-right-align" id="reg_no_view">
-					<input type="hidden" name="reg_no" id="reg_no">
+					<input type="text" class="w3-right-align" id="reg_no_view" value="${DATA.reg_no}">
+					<input type="hidden" name="reg_no" id="reg_no" value="${DATA.reg_no}">
 				</div>
 				<div class="mgb10">
 					<label for="years" class="mgr30">연령</label>
-					<input type="text" class="mgr30 w3-right-align" name="years" id="years">
+					<input type="text" class="mgr30 w3-right-align" name="years" id="years" value="${DATA.years}">
 					<label for="email" class="mgr30">*이메일</label>
 					<input type="text" class="mgr30 w150" name="email_id" id="email_id">
 					<select class="w180 mgr20" id="email_addr">
@@ -665,46 +664,46 @@
 						<option value="@naver.com">@naver.com</option>
 						<option value="@gmail.com">@gmail.com</option>
 					</select>
-					<input type="hidden" name="email" id="email">
+					<input type="hidden" name="email" id="email" value="${DATA.email}">
 					<label for="join_gbn_code" class="mgr30">직종체크</label>
 					<select class="w180 mgr20" name="join_gbn_code" id="join_gbn_code">
 						<option></option>
 				<c:forEach var="data" items="${LIST1}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.join_gbn_code eq data.code}">selected</c:if>>${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="sex" class="mgr30">성별</label>
 					<select class="w180" name="sex" id="sex">
 						<option></option>
 				<c:forEach var="data" items="${LIST2}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.sex eq data.code}">selected</c:if>>${data.name}</option>
 				</c:forEach>
 					</select>
 				</div>
 				<div class="mgb10">
 					<label for="zip" class="mgr30">주소</label>
-					<input type="text" class="w150 mgr40 w3-right-align" placeholder="우편번호" name="zip" id="zip">
+					<input type="text" class="w150 mgr40 w3-right-align" placeholder="우편번호" name="zip" id="zip" value="${DATA.zip}">
 					<input class="w80 mgr30 bgcw" type="button" id="saddr" value="주소검색">
-					<input type="text" class="w480 mgr20" placeholder="주소" name="addr1" id="addr1">
-					<input type="text" class="w480" placeholder="세부주소" name="addr2" id="addr2">
+					<input type="text" class="w480 mgr20" placeholder="주소" name="addr1" id="addr1" value="${DATA.addr1}">
+					<input type="text" class="w480" placeholder="세부주소" name="addr2" id="addr2" value="${DATA.addr2}">
 				</div>
 				<div class="mgb20">
 					<label for="pos_gbn_code" class="mbr5 pdr30">직위</label>
 					<select name="pos_gbn_code" id="pos_gbn_code">
 						<option></option>
 				<c:forEach var="data" items="${LIST3}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.pos_gbn_code eq data.code}">selected</c:if>>${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="dept_code" class="pdr30">부서</label>
 					<select name="dept_code" id="dept_code">
 						<option></option>
 				<c:forEach var="data" items="${LIST4}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.dept_code eq data.code}">selected</c:if>>${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="salary" class="pdr30" >연봉(만원)</label>
-					<input type="text" class="phalign w3-right-align" name="salary" id="salary" placeholder="(만원)">
+					<input type="text" class="phalign w3-right-align" name="salary" id="salary" placeholder="(만원)" value="${DATA.salary}">
 				</div>
 			</div>
 		</div>
@@ -714,28 +713,28 @@
 					<select class="mgr30" name="join_type" id="join_type">
 						<option></option>
 				<c:forEach var="data" items="${LIST5}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.join_type eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="gart_level" class="pdr30">등급</label>
 					<select class="mgr30" name="gart_level" id="gart_level">
 						<option></option>
 				<c:forEach var="data" items="${LIST6}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.gart_level eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="put_yn" class="pdr30">투입여부</label>
 					<select class="mgr30" name="put_yn">
 						<option></option>
 				<c:forEach var="data" items="${LIST7}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.put_yn eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_yn" class="pdr30">군필여부</label>
 					<select class="mgr30" name="mil_yn" id="mil_yn">
 						<option></option>
 				<c:forEach var="data" items="${LIST8}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.mil_yn eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 			</div>
@@ -744,48 +743,48 @@
 					<select class="mgr30" name="mil_type" id="mil_type">
 						<option></option>
 				<c:forEach var="data" items="${LIST9}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${mil_type eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_level" class="pdr30 mil">계급</label>
 					<select class="mgr30" name="mil_level" id="mil_level">
 						<option></option>
 				<c:forEach var="data" items="${LIST10}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${mil_level eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_startdate" class="pdr30">입영일자</label>
-					<input type="text" name="mil_startdate" id="mil_startdate" readonly="readonly">
+					<input type="text" name="mil_startdate" id="mil_startdate" readonly="readonly" value="${DATA.mil_startdate}">
 					<label for="mil_enddate" class="pdr30">전역일자</label>
-					<input type="text" name="mil_enddate" id="mil_enddate" readonly="readonly">
+					<input type="text" name="mil_enddate" id="mil_enddate" readonly="readonly" value="${DATA.mil_enddate}">
 			</div>
 			<div class="mgl80 mgb20">
 					<label for="kosa_reg_yn" class="mbr5 pdr30">KOSA등록</label>
 					<select class="mgr30" name="kosa_reg_yn" id="kosa_reg_yn">
 						<option></option>
 				<c:forEach var="data" items="${LIST11}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.kosa_reg_yn eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="kosa_class_code" class="pdr30">KOSA등급</label>
 					<select class="mgr30" name="kosa_class_code" id="kosa_class_code">
 						<option></option>
 				<c:forEach var="data" items="${LIST12}">
-						<option value="${data.code}">${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.kosa_class_code eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="join_day" class="pdr30">*입사일자</label>
-					<input type="text" name="join_day" id="join_day" readonly="readonly">
+					<input type="text" name="join_day" id="join_day" readonly="readonly" value="${DATA.join_day}">
 					<label for="retire_day" class="pdr30">퇴사일자</label>
-					<input type="text" name="retire_day" id="retire_day" readonly="readonly">
+					<input type="text" name="retire_day" id="retire_day" readonly="readonly" value="${DATA.retire_day}">
 			</div>
 			<div class="mgl80 mgb20">
 					<label for="cmp_reg_no" class="mbr5 pdr30 ">사업자번호</label>
-					<input type="text" class="w3-right-align" name="cmp_reg_no" id="cmp_reg_no">
+					<input type="text" class="w3-right-align" name="cmp_reg_no" id="cmp_reg_no" value="${DATA.cmp_reg_no}">
 					<label for="crm_name" class="pdr30">업체명</label>
-					<input type="text" name="crm_name" id="crm_name">
+					<input type="text" name="crm_name" id="crm_name" value="${DATA.crm_name}">
 					<label for="cmp_reg_image" class="pdr30">사업자등록증</label>
-					<input type="text" class="bgcg" name="cmp_reg_image_name" id="cmp_reg_image_name" readonly="readonly">
+					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name" readonly="readonly" value="${DATA.cmp_reg_image}">
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="cmp_img">
 					<input type="button" class="inblock w150 bgcw" value="등록" id="cmpbtn">
 					<input type="file" class="w3-hide" name="cmp_reg_image" id="cmpfile" onchange="cmpfileURL(this);"
@@ -794,10 +793,10 @@
 			<div class="mgl80 mgb20">
 					<label for="self_intro" class="mbr5 pdr30">자기소개</label>
 					<textarea rows="2" cols="80" name="self_intro" id="self_intro" 
-							placeholder="100자 내외로 적으시오." maxlength="110"></textarea>
+							placeholder="100자 내외로 적으시오." maxlength="110">${DATA.self_intro}</textarea>
 					<label class="mbr5 pdr30">이력서</label>
-					<input type="text" class="bgcg" id="carrier_image_name" name="carrier_image_name" readonly="readonly">
-					<input type="button" class="inblock w150 bgcw" value="미리보기" id="self_img">
+					<input type="text" id="carrier_image_name" name="carrier_image_name" readonly="readonly" value="${DATA.carrier_image}">
+					<input type="button" class="inblock w150 bgcw" value="다운" id="self_img">
 					<input type="button" class="inblock w150 bgcw" value="파일업로드" id="crbtn">
 					<input type="file" class="w3-hide" name="carrier_image" id="crfile" onchange="crfileURL(this);"
 							accept="image/*">

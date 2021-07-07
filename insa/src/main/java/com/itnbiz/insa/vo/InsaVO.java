@@ -5,9 +5,10 @@ import java.sql.Date;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.itnbiz.insa.util.PageUtil;
 
 public class InsaVO {
-	private int seq, sabun, years, zip, salary, sugst_money, current_salary, gart_year, gart_month, cnt;
+	private int seq, sabun, years, zip, salary, sugst_money, current_salary, gart_year, gart_month, cnt, rno;
 	private String put_yn, name, reg_no, eng_name, phone, hp, carrier, pos_gbn_code, cmp_reg_no,
 			sex, email, addr1, addr2, dept_code, join_gbn_code, id, pwd, kosa_reg_yn, kosa_class_code, mil_yn,
 			mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level, self_intro, crm_name,
@@ -15,6 +16,7 @@ public class InsaVO {
 			respon_dept, work_contents, oriname, savename, dir, carrier_image_name, cmp_reg_image_name, profile_image_name;
 	private Date join_day, retire_day, wrk_posb_day, work_start_day, work_end_day;
 	private MultipartFile profile_image, carrier_image, cmp_reg_image;
+	private PageUtil page;
 	public int getSeq() {
 		return seq;
 	}
@@ -71,6 +73,12 @@ public class InsaVO {
 	}
 	public void setCnt(int cnt) {
 		this.cnt = cnt;
+	}
+	public int getRno() {
+		return rno;
+	}
+	public void setRno(int rno) {
+		this.rno = rno;
 	}
 	public void setGart_month(int gart_month) {
 		this.gart_month = gart_month;
@@ -399,7 +407,10 @@ public class InsaVO {
 	public void setCmp_reg_image(MultipartFile cmp_reg_image) {
 		this.cmp_reg_image = cmp_reg_image;
 	}
-	
-	
-	
+	public PageUtil getPage() {
+		return page;
+	}
+	public void setPage(PageUtil page) {
+		this.page = page;
+	}
 }

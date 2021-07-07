@@ -35,7 +35,7 @@
 		FROM
 			insa_com
 		WHERE
-			gubun = 'join_gbn'			
+			gubun = 'join_gbn_code'			
 	</select>
 	
 	<select id="sexCodeSel" resultType="iVO">
@@ -53,7 +53,7 @@
 		FROM
 			insa_com
 		WHERE
-			gubun = 'pos_gbn'			
+			gubun = 'pos_gbn_code'			
 	</select>
 	
 	<select id="deptCodeSel" resultType="iVO">
@@ -62,7 +62,7 @@
 		FROM
 			insa_com
 		WHERE
-			gubun = 'dept'			
+			gubun = 'dept_code'			
 	</select>
 	
 	<select id="joinTypeCodeSel" resultType="iVO">
@@ -134,7 +134,7 @@
 		FROM
 			insa_com
 		WHERE
-			gubun = 'kosa_class'			
+			gubun = 'kosa_class_code'			
 	</select>
 	
 	<insert id="empregProc" parameterType="iVO">
@@ -216,5 +216,98 @@
     		sabun = #{sabun}
 	</update>
 	
+	<select id="insaListSel" resultType="iVO" parameterType="iVO">
+		SELECT
+		    rno, sabun, name, reg_no, hp, pos_gbn_code, join_day, retire_day, put_yn, salary
+		FROM
+		    (
+		        SELECT
+		            ROWNUM rno, sabun, name, reg_no, hp, pos_gbn_code, join_day, retire_day, put_yn, salary
+		        FROM
+		            (
+		                SELECT
+		                    sabun, i.name, reg_no, hp, join_day, retire_day, salary,
+		                    (SELECT ic.name FROM insa_com ic WHERE put_yn = ic.code) put_yn,
+                    		(SELECt ic.name FROM insa_com ic WHERE pos_gbn_code = ic.code) pos_gbn_code
+		                FROM
+		                    insa i, insa_com ic
+	                    <where>
+	         				put_yn = ic.code
+					<if test="sabun != null">
+							AND sabun LIKE '%' ||#{sabun}|| '%'
+					</if>
+					<if test="name != null">
+							AND i.name LIKE '%' ||#{name}|| '%'
+					</if>
+					<if test="join_type != null">
+							AND join_type LIKE '%' ||#{join_type}|| '%'
+					</if>
+					<if test="put_yn != null">
+							AND put_yn LIKE '%' ||#{put_yn}|| '%'
+					</if>
+					<if test="pos_gbn_code != null">
+							AND pos_gbn_code LIKE '%' ||#{pos_gbn_code}|| '%'
+					</if>
+					<if test="join_day != null">
+							AND join_day LIKE '%' ||#{join_day}|| '%'
+					</if>
+					<if test="retire_day != null">
+							AND retire_day LIKE '%' ||#{retire_day}|| '%'
+					</if>
+					<if test="join_gbn_code != null">
+							AND join_gbn_code LIKE '%' ||#{join_gbn_code}|| '%'
+					</if>			
+	                    </where>
+		                ORDER BY
+		                    sabun
+		            )
+			)
+		WHERE
+		    rno BETWEEN #{page.startCont} AND #{page.endCont}
+	</select>
 	
+	<select id="insaSelCnt" resultType="int" parameterType="iVO">
+		SELECT
+			count(*)
+		FROM
+			insa
+	   <where>
+	<if test="sabun != null">
+			AND sabun LIKE '%' ||#{sabun}|| '%'
+	</if>
+	<if test="name != null">
+			AND name LIKE '%' ||#{name}|| '%'
+	</if>
+	<if test="join_type != null">
+			AND join_type LIKE '%' ||#{join_type}|| '%'
+	</if>
+	<if test="put_yn != null">
+			AND put_yn LIKE '%' ||#{put_yn}|| '%'
+	</if>
+	<if test="pos_gbn_code != null">
+			AND pos_gbn_code LIKE '%' ||#{pos_gbn_code}|| '%'
+	</if>
+	<if test="join_day != null">
+			AND join_day LIKE '%' ||#{join_day}|| '%'
+	</if>
+	<if test="retire_day != null">
+			AND retire_day LIKE '%' ||#{retire_day}|| '%'
+	</if>
+	<if test="join_gbn_code != null">
+			AND join_gbn_code LIKE '%' ||#{join_gbn_code}|| '%'
+	</if>     				
+		</where>
+	</select>
+	
+	<select id="insaDetail" resultType="iVO" parameterType="int">
+		SELECT
+			sabun, name, id, pwd, hp, email, join_day, retire_day, put_yn, reg_no, eng_name, phone, 
+			carrier, pos_gbn_code, cmp_reg_no, sex, years, zip, addr1, addr2, dept_code, salary, kosa_reg_yn,
+			kosa_class_code, mil_yn, mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level,
+			self_intro, crm_name, profile_image, carrier_image, cmp_reg_image
+		FROM
+			insa
+		WHERE
+			sabun = #{sabun}
+	</select>
 </mapper>
