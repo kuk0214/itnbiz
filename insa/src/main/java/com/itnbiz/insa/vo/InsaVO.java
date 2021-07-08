@@ -9,11 +9,12 @@ import com.itnbiz.insa.util.PageUtil;
 
 public class InsaVO {
 	private int seq, sabun, years, zip, salary, sugst_money, current_salary, gart_year, gart_month, cnt, rno;
-	private String put_yn, name, reg_no, eng_name, phone, hp, carrier, pos_gbn_code, cmp_reg_no,
-			sex, email, addr1, addr2, dept_code, join_gbn_code, id, pwd, kosa_reg_yn, kosa_class_code, mil_yn,
-			mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level, self_intro, crm_name,
-			gubun, code, note, codename, pjt_gbn_code, eqm_yn, work_area, major_stud_gbn, school_name, cmp_name, 
-			respon_dept, work_contents, oriname, savename, dir, carrier_image_name, cmp_reg_image_name, profile_image_name;
+	private String put_yn, name, reg_no, eng_name, phone, hp, carrier, pos_gbn_code, cmp_reg_no, sex, email, 
+			addr1, addr2, dept_code, join_gbn_code, id, pwd, kosa_reg_yn, kosa_class_code, mil_yn, mil_type, 
+			mil_level, mil_startdate, mil_enddate, join_type, gart_level, self_intro, crm_name, gubun, code, 
+			note, codename, pjt_gbn_code, eqm_yn, work_area, major_stud_gbn, school_name, cmp_name, respon_dept, 
+			work_contents, oriname, savename, dir, carrier_image_name, cmp_reg_image_name, profile_image_name,
+			option;
 	private Date join_day, retire_day, wrk_posb_day, work_start_day, work_end_day;
 	private MultipartFile profile_image, carrier_image, cmp_reg_image;
 	private PageUtil page;
@@ -358,6 +359,12 @@ public class InsaVO {
 	}
 	public void setProfile_image_name(String profile_image_name) {
 		this.profile_image_name = profile_image_name;
+	}
+	public String getOption() {
+		return option;
+	}
+	public void setOption(String option) {
+		this.option = option;
 	}
 	public Date getJoin_day() {
 		return join_day;

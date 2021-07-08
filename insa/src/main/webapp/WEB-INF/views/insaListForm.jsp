@@ -189,21 +189,21 @@
 			<input type="text" class="mgr55" name="name" id="name" value="${DATA.name}">
 			<label for="join_type" class="mgr55">입사구분</label>
 			<select class="mgr55" name="join_type" id="join_type">
-				<option></option>
+				<option>(선택)</option>
 		<c:forEach var="data" items="${LIST3}">
 				<option value="${data.code}" <c:if test="${DATA.join_type eq data.code}">selected="selected"</c:if>>${data.name}</option>
 		</c:forEach>
 			</select>
 			<label for="put_yn" class="mgr55">투입여부</label>
 			<select class="mgr55" name="put_yn" id="put_yn">
-				<option></option>
+				<option>(선택)</option>
 		<c:forEach var="data" items="${LIST4}">
 				<option value="${data.code}" <c:if test="${DATA.put_yn eq data.code}">selected="selected"</c:if>>${data.name}</option>
 		</c:forEach>
 			</select><br>
 			<label for="pos_gbn_code" class="mgr55">직위</label>
 			<select class="mgr40" name="pos_gbn_code" id="pos_gbn_code">
-				<option></option>
+				<option>(선택)</option>
 		<c:forEach var="data" items="${LIST2}">
 				<option value="${data.code}" <c:if test="${DATA.pos_gbn_code eq data.code}">selected</c:if>>${data.name}</option>
 		</c:forEach>
@@ -214,7 +214,7 @@
 			<input type="text" class="mgr5 w250" name="retire_day" id="retire_day" value="${DATA.retire_day}">
 			<label for="join_gbn_code" class="mgr55">직종체크</label>
 			<select class="mgr55" name="join_gbn_code" id="join_gbn_code">
-				<option></option>
+				<option>(선택)</option>
 		<c:forEach var="data" items="${LIST1}">
 				<option value="${data.code}" <c:if test="${DATA.join_gbn_code eq data.code}">selected</c:if>>${data.name}</option>
 		</c:forEach>

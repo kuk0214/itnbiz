@@ -8,10 +8,19 @@
 <link rel="stylesheet" type="text/css" href="/insa/css/w3.css">
 <link rel="stylesheet" type="text/css" href="/insa/css/user.css">
 <script type="text/javascript" src="/insa/js/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/insa/js/jquery.jqGrid.min.js"></script>
+<script type="text/javascript" src="/insa/js/grid.locale-kr.js"></script>
+<script type="text/javascript" src="/insa/js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/insa/css/ui.jqgrid.css">
+<link rel="stylesheet" type="text/css" href="/insa/css/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/insa/css/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css" href="/insa/css/jquery-ui.theme.css.css">
+
+<!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
 <script type="text/javascript">
+
 	function profileURL(input) {
 		if (input.files && input.files[0]) {
 	    	var reader = new FileReader();
@@ -105,6 +114,8 @@
 
 		  return str;
 		}
+	
+	
 	
 	$(document).ready(function() {
 		var fileTarget1 = $('#crfile'); 
@@ -252,14 +263,6 @@
 				$('#pwd').val(tpwd);				
 			} else if(tpwd.length > 1) {
 				$('#pwd').val(pwd + tpwd.substring(tpwd.length - 1));
-			}
-			var reg1 = /^[a-zA-Z0-9!@#$%^&*]*$/;
-			if(!reg1.test(tpwd)) {
-				alert('영어 대소문자, 숫자, 특수문자!@#$%^&*만 사용가능합니다.');
-				setTimeout(function() { 
-					$('#pwd_view').focus(); 
-				}, 10)
-				return
 			}
 			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9!@#$%^&*]/g, '*') + tpwd.substring(tpwd.length - 1);
 			if(tpwd.length > 1) {
@@ -503,7 +506,7 @@
 			}
 		});
 		
-		$('#sbtn').click(function() {
+		$('#ebtn').click(function() {
 			var salary = $('#salary').val();
 			var zip = $('#zip').val();
 			var years = $('#years').val();
@@ -558,18 +561,17 @@
 			
 			var data = new FormData($('#frm')[0]);
 			$.ajax({ 
-				url: '/insa/empRegProc.insa',
+				url: '/insa/insaEdit.insa',
 				data: data, 
 				processData: false, 
 				contentType: false,
+				enctype: "multipart/form-data",
 				type: 'POST', 
 				success: function(data) { 
-					if(data.result == "IN") {
-						alert("등록 완료");
-					} else if(data.result == "UP") {
-						alert("저장 완료");
+					if(data.result == "OK") {
+						alert("수정 완료");
 					} else {
-						alert("실패");
+						alert("수정 실패");
 					}
 				},
 				error: function() {
@@ -593,6 +595,40 @@
 			$('#crfile').prop('disabled', false);
 			$('#carrier_image_name').prop('disabled', false);
 		});
+		
+		$('#dbtn').click(function() {
+			$('#frm').attr('action', '/insa/insaDel.insa');
+			$('#frm').submit();
+		});
+		
+		/* var putCol = ['No', '근무가능일', '월 제시금액(단위:만원)', 'PJ형태구분코드', '장비유무', '현재연봉(단위:만원)', '근무지'];
+		
+		$("#mainGrid").jqGrid({
+		            height: 261,
+		            width: 1750,
+		            colNames: putCol,
+		            colModel: searchResultColModel,
+		            rowNum : 10,
+		            pager: "pager",
+		            loadtext: "데이터 조회중입니다."
+		        }); */
+		$('.tab_item').click(function() {
+			var option = $(this).prev().attr('id');
+			$.ajax({
+				url: '/insa/idCheck.insa',
+				type: 'post',
+				dataType: 'json',
+				data: {
+					option: option
+				},
+				success: function(obj) {
+					
+				},
+				error: function() {
+					alert('####### 통신 에러 #######')
+				}
+			});
+		});
 	});
 </script>
 </head>
@@ -610,11 +646,13 @@
 			<input type="button" class="w3-third w3-button w3-black" value="이전" onclick="history.back()">
 		</div>
 	</div>
-	<form method="POST" name="frm" id="frm" enctype="multipart/form-data">
+	<form method="POST" name="frm" id="frm">
 		<div>
 			<div class="inblock">
 				<div class="mgl40 mgr40 pdAll40">
-					<img class="imgBox300" src="/insa/img/noimage.jpg" id="img_view"><br>
+			<c:forEach var="file" items="${LIST}" begin="0" end="0">
+					<img class="imgBox300" src="/insa/img/${file.savename}" id="img_view"><br>
+			</c:forEach>
 					<input type="file" class="w3-hide" name="profile_image" id="profile_image" onchange="profileURL(this);"
 						accept="image/*">
 					<input type="button" class="inblock w180 mgt5 mgl60 bgcw" id="filebtn" value="사진올리기">
@@ -784,7 +822,7 @@
 					<label for="crm_name" class="pdr30">업체명</label>
 					<input type="text" name="crm_name" id="crm_name" value="${DATA.crm_name}">
 					<label for="cmp_reg_image" class="pdr30">사업자등록증</label>
-					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name" readonly="readonly" value="${DATA.cmp_reg_image}">
+					<input type="text" name="cmp_reg_image_name" id="cmp_reg_image_name" readonly="readonly" value="${DATA.cmp_reg_image_name}">
 					<input type="button" class="inblock w150 bgcw" value="미리보기" id="cmp_img">
 					<input type="button" class="inblock w150 bgcw" value="등록" id="cmpbtn">
 					<input type="file" class="w3-hide" name="cmp_reg_image" id="cmpfile" onchange="cmpfileURL(this);"
@@ -795,12 +833,13 @@
 					<textarea rows="2" cols="80" name="self_intro" id="self_intro" 
 							placeholder="100자 내외로 적으시오." maxlength="110">${DATA.self_intro}</textarea>
 					<label class="mbr5 pdr30">이력서</label>
-					<input type="text" id="carrier_image_name" name="carrier_image_name" readonly="readonly" value="${DATA.carrier_image}">
+					<input type="text" id="carrier_image_name" name="carrier_image_name" readonly="readonly" value="${DATA.carrier_image_name}">
 					<input type="button" class="inblock w150 bgcw" value="다운" id="self_img">
 					<input type="button" class="inblock w150 bgcw" value="파일업로드" id="crbtn">
 					<input type="file" class="w3-hide" name="carrier_image" id="crfile" onchange="crfileURL(this);"
 							accept="image/*">
 			</div>
+			
 		</div>
 	</form>
 	
@@ -815,5 +854,17 @@
       		<img id="cmpfile_img" style="width:100%">
     	</div>
   	</div>
+  	
+  	<form class="tabs">
+	    <input id="put" type="radio" name="tab_item" checked>
+	    <label class="tab_item" for="put">투입가능정보</label>
+	    <input id="acad" type="radio" name="tab_item">
+	    <label class="tab_item" for="acad">학력사항</label>
+	    <input id="carrier" type="radio" name="tab_item">
+	    <label class="tab_item" for="carrier">경력사항</label>
+	    <div class="tab_content" id="content">
+	    	ㅇㅇ
+		</div>
+	</form>
 </body>
 </html>

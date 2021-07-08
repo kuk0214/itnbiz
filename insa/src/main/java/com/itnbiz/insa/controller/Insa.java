@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.itnbiz.insa.dao.InsaDao;
 import com.itnbiz.insa.util.FileUtil;
@@ -16,7 +17,7 @@ import com.itnbiz.insa.util.PageUtil;
 import com.itnbiz.insa.vo.InsaVO;
 
 @Controller
-public class Main {
+public class Insa {
 	@Autowired
 	InsaDao iDao;
 	@Autowired
@@ -205,6 +206,7 @@ public class Main {
 	@RequestMapping("/insaDetail.insa")
 	public ModelAndView insaDetail(int sabun, int nowPage, ModelAndView mv) {
 		InsaVO iVO = iDao.insaDetail(sabun);
+		List fileList = iDao.insaFileSel(sabun);
 		List list1 = iDao.joinGbnCodeSel();
 		List list2 = iDao.sexCodeSel();
 		List list3 = iDao.posGbnCodeSel();
@@ -219,6 +221,7 @@ public class Main {
 		List list12 = iDao.kosaClsCodeSel();
 		mv.addObject("DATA", iVO);
 		mv.addObject("nowPage", nowPage);
+		mv.addObject("LIST", fileList);
 		mv.addObject("LIST1", list1);
 		mv.addObject("LIST2", list2);
 		mv.addObject("LIST3", list3);
@@ -233,4 +236,89 @@ public class Main {
 		mv.addObject("LIST12", list12);
 		return mv;
 	}
+	
+	@RequestMapping("/insaEdit.insa")
+	@ResponseBody
+	public HashMap<String, Object> insaEdit(MultipartHttpServletRequest multi) {
+		InsaVO iVO = new InsaVO();
+		if(multi.getParameter("salary") != null) {
+			iVO.setSalary(Integer.parseInt(multi.getParameter("salary")));
+		}
+		if(multi.getParameter("years") != null) {
+			iVO.setYears(Integer.parseInt(multi.getParameter("years")));
+		}
+		if(multi.getParameter("zip") != null) {
+			iVO.setZip(Integer.parseInt(multi.getParameter("zip")));
+		}
+		iVO.setName(multi.getParameter("name"));
+		iVO.setSabun(Integer.parseInt(multi.getParameter("sabun")));
+		iVO.setId(multi.getParameter("id"));
+		iVO.setPwd(multi.getParameter("pwd"));
+		iVO.setHp(multi.getParameter("hp"));
+		iVO.setEmail(multi.getParameter("email"));
+		iVO.setPut_yn(multi.getParameter("put_yn"));
+		iVO.setReg_no(multi.getParameter("reg_no"));
+		iVO.setEng_name(multi.getParameter("eng_name"));
+		iVO.setPhone(multi.getParameter("phone"));
+		iVO.setCarrier(multi.getParameter("carrier"));
+		iVO.setPos_gbn_code(multi.getParameter("pos_gbn_code"));
+		iVO.setCmp_reg_no(multi.getParameter("cmp_reg_no"));
+		iVO.setSex(multi.getParameter("sex"));
+		iVO.setAddr1(multi.getParameter("addr1"));
+		iVO.setAddr2(multi.getParameter("addr2"));
+		iVO.setDept_code(multi.getParameter("dept_code"));
+		iVO.setJoin_gbn_code(multi.getParameter("join_gbn_code"));
+		iVO.setKosa_class_code(multi.getParameter("kosa_class_code"));
+		iVO.setKosa_reg_yn(multi.getParameter("kosa_reg_yn"));
+		iVO.setMil_yn(multi.getParameter("mil_yn"));
+		iVO.setMil_type(multi.getParameter("mil_type"));
+		iVO.setMil_level(multi.getParameter("mil_level"));
+		iVO.setMil_startdate(multi.getParameter("mil_startdate"));
+		iVO.setMil_enddate(multi.getParameter("mil_enddate"));
+		iVO.setJoin_type(multi.getParameter("join_type"));
+		iVO.setGart_level(multi.getParameter("gart_level"));
+		iVO.setSelf_intro(multi.getParameter("self_intro"));
+		iVO.setCrm_name(multi.getParameter("crm_name"));
+		iVO.setJoin_day(java.sql.Date.valueOf(multi.getParameter("join_day")));
+		if(multi.getParameter("retire_day") != null) {
+			iVO.setRetire_day(java.sql.Date.valueOf(multi.getParameter("retire_day")));
+		}
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("result", "NO");
+		int cnt = iDao.empregProc2(iVO);
+
+			if(cnt == 1) {
+				map.put("result", "OK");
+			}
+		return map;
+	}
+	
+	@RequestMapping("/insaDel.insa")
+	public ModelAndView insaDel(int sabun, ModelAndView mv, RedirectView rv) {
+		int cnt = iDao.insaDel(sabun);
+		if(cnt == 1) {
+			rv.setUrl("/insa/insaListForm.insa");			
+		}
+		mv.setView(rv);
+		return mv;
+	}
+	
+	@RequestMapping("/optionSerch.insa")
+	@ResponseBody
+	public Object optionSerch(InsaVO iVO) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String option = iVO.getOption();
+		int sabun = iVO.getSabun();
+		if(option.equals("put")) {
+			List list = iDao.putSel(sabun);
+		} else if(option.equals("acad")) {
+			List list = iDao.acadSel(sabun);
+		} else {
+			List list = iDao.carrierSel(sabun);
+		}
+		
+		map.put("LIST", list);
+		return map;
+	}
+	
 }

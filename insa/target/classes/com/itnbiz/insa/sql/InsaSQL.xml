@@ -232,7 +232,7 @@
 		                FROM
 		                    insa i, insa_com ic
 	                    <where>
-	         				put_yn = ic.code
+	         				put_yn = ic.code(+)
 					<if test="sabun != null">
 							AND sabun LIKE '%' ||#{sabun}|| '%'
 					</if>
@@ -304,9 +304,52 @@
 			sabun, name, id, pwd, hp, email, join_day, retire_day, put_yn, reg_no, eng_name, phone, 
 			carrier, pos_gbn_code, cmp_reg_no, sex, years, zip, addr1, addr2, dept_code, salary, kosa_reg_yn,
 			kosa_class_code, mil_yn, mil_type, mil_level, mil_startdate, mil_enddate, join_type, gart_level,
-			self_intro, crm_name, profile_image, carrier_image, cmp_reg_image
+			self_intro, crm_name, profile_image, carrier_image carrier_image_name, cmp_reg_image cmp_reg_image_name
 		FROM
 			insa
+		WHERE
+			sabun = #{sabun}
+	</select>
+	
+	<select id="insaFileSel" resultType="iVO" parameterType="int">
+		SELECT
+			savename
+		FROM
+			insa_file
+		WHERE
+			sabun = #{sabun}
+	</select>
+	
+	<delete id="insaDel" parameterType="int">
+		DELETE FROM
+			insa
+		WHERE
+			sabun = #{sabun}
+	</delete>
+	
+	<select id="putSel" resultType="iVO" parameterType="int">
+		SELECT
+			wrk_posb_day, sugst_money, pjt_gbn_code, eqm_yn, current_salary, work_area
+		FROM
+			input_info
+		WHERE
+			sabun = #{sabun}
+	</select>
+	
+	<select id="acadSel" resultType="iVO" parameterType="int">
+		SELECT
+			major_stud_gbn, gart_level, gart_year, gart_month, school_name
+		FROM
+			insa_acad_ability
+		WHERE
+			sabun = #{sabun}
+	</select>
+	
+	<select id="carrierSel" resultType="iVO" parameterType="int">
+		SELECT
+			cmp_name_carrier, work_start_day, work_end_day, pos_gbn_code, respon_dept, work_contents
+		FROM
+			insa_carrier
 		WHERE
 			sabun = #{sabun}
 	</select>

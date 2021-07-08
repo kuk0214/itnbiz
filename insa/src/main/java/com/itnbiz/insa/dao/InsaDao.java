@@ -112,7 +112,7 @@ public class InsaDao {
 	}
 	
 	// 사원 리스트 조회 데이터베이스 전담 처리함수
-	public List insaListSel(InsaVO iVO) {
+	public List<InsaVO> insaListSel(InsaVO iVO) {
 		return sqlSession.selectList("iSQL.insaListSel", iVO);
 	}
 	
@@ -124,5 +124,30 @@ public class InsaDao {
 	// 사원 상세정보 조회 데이터베이스 전담 처리함수
 	public InsaVO insaDetail(int sabun) {
 		return sqlSession.selectOne("iSQL.insaDetail", sabun);
+	}
+	
+	// 사원 파일 조회 데이터베이스 전담 처리함수
+	public List insaFileSel(int sabun) {
+		return sqlSession.selectList("iSQL.insaFileSel", sabun);
+	}
+	
+	// 사원 정보 삭제 데이터베이스 전담 처리함수
+	public int insaDel(int sabun) {
+		return sqlSession.delete("iSQL.insaDel", sabun);
+	}
+	
+	// 투입가능정보 조회 데이터베이스 전담 처리함수
+	public List putSel(int sabun) {
+		return sqlSession.selectList("iSQL.putSel", sabun);
+	}
+	
+	// 학력사항 조회 데이터베이스 전담 처리함수
+	public List acadSel(int sabun) {
+		return sqlSession.selectList("iSQL.acadSel", sabun);
+	}
+	
+	// 경력사항 조회 데이터베이스 전담 처리함수
+	public List carrierSel(int sabun) {
+		return sqlSession.selectList("iSQL.carrierSel", sabun);
 	}
 } 

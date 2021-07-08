@@ -253,14 +253,7 @@
 			} else if(tpwd.length > 1) {
 				$('#pwd').val(pwd + tpwd.substring(tpwd.length - 1));
 			}
-			var reg1 = /^[a-zA-Z0-9!@#$%^&*]*$/;
-			if(!reg1.test(tpwd)) {
-				alert('영어 대소문자, 숫자, 특수문자!@#$%^&*만 사용가능합니다.');
-				setTimeout(function() { 
-					$('#pwd_view').focus(); 
-				}, 10)
-				return
-			}
+
 			var spwd = tpwd.substring(0, tpwd.length - 1).replace(/[a-zA-Z0-9!@#$%^&*]/g, '*') + tpwd.substring(tpwd.length - 1);
 			if(tpwd.length > 1) {
 				$(this).val(spwd);				
