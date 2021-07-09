@@ -478,11 +478,12 @@
 		$('#zip').blur(function() {
 			var zip = $('#zip').val();
 			var zip_reg = /^[0-9]{5}$/;
-			if(zip != "" && !zip_reg.test(zip)) {}
-			alert('숫자만 입력하세요');
-			setTimeout(function() { 
-				$('#zip').focus(); 
-			}, 10)
+			if(zip != "" && !zip_reg.test(zip)) {
+				alert('숫자만 입력하세요');
+				setTimeout(function() { 
+					$('#zip').focus(); 
+				}, 10)				
+			}
 		});
 		
 		$('#cmp_reg_no').focus(function() {
@@ -601,34 +602,53 @@
 			$('#frm').submit();
 		});
 		
-		/* var putCol = ['No', '근무가능일', '월 제시금액(단위:만원)', 'PJ형태구분코드', '장비유무', '현재연봉(단위:만원)', '근무지'];
 		
-		$("#mainGrid").jqGrid({
-		            height: 261,
-		            width: 1750,
-		            colNames: putCol,
-		            colModel: searchResultColModel,
-		            rowNum : 10,
-		            pager: "pager",
-		            loadtext: "데이터 조회중입니다."
-		        }); */
 		$('.tab_item').click(function() {
 			var option = $(this).prev().attr('id');
+			var sabun = $('#sabun').val();
 			$.ajax({
-				url: '/insa/idCheck.insa',
+				url: '/insa/optionSearch.insa',
 				type: 'post',
 				dataType: 'json',
 				data: {
-					option: option
+					option: option,
+					sabun: sabun
 				},
 				success: function(obj) {
-					
+					var list = obj.list;
+					if(obj.data == "put") {
+						putCol = ['No', '근무가능일', '월 제시금액(단위:만원)', 'PJ형태구분코드', '장비유무', '현재연봉(단위:만원)', '근무지'];
+						$("#mainGrid").jqGrid({
+						            height: 261,
+						            width: 1750,
+						            colNames: putCol,
+						            colModel: list,
+						            rowNum : 10,
+						            pager: "pager",
+						            loadtext: "데이터 조회중입니다."
+						        });
+					}
 				},
 				error: function() {
 					alert('####### 통신 에러 #######')
 				}
 			});
 		});
+		
+		var tzip = ${DATA.zip} + '';
+		if(tzip.length == 4) {
+			$('#zip').val('0' + tzip);
+		} else {
+			$('#zip').val(tzip);
+		}
+		
+		var sal = ${DATA.salary} + '';
+		if(sal.length == 4) {
+			sal = sal.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		} else if(salary.length == 8) {
+			sal = sal.replace(/\B(?=(\d{3})+(?!\d))/g, ",");	
+		}
+		$('#salary').val(sal);
 	});
 </script>
 </head>
@@ -651,7 +671,7 @@
 			<div class="inblock">
 				<div class="mgl40 mgr40 pdAll40">
 			<c:forEach var="file" items="${LIST}" begin="0" end="0">
-					<img class="imgBox300" src="/insa/img/${file.savename}" id="img_view"><br>
+					<img class="imgBox300" src="/insa/img/upload/${file.savename}" id="img_view"><br>
 			</c:forEach>
 					<input type="file" class="w3-hide" name="profile_image" id="profile_image" onchange="profileURL(this);"
 						accept="image/*">
@@ -720,7 +740,7 @@
 				</div>
 				<div class="mgb10">
 					<label for="zip" class="mgr30">주소</label>
-					<input type="text" class="w150 mgr40 w3-right-align" placeholder="우편번호" name="zip" id="zip" value="${DATA.zip}">
+					<input type="text" class="w150 mgr40 w3-right-align" placeholder="우편번호" name="zip" id="zip">
 					<input class="w80 mgr30 bgcw" type="button" id="saddr" value="주소검색">
 					<input type="text" class="w480 mgr20" placeholder="주소" name="addr1" id="addr1" value="${DATA.addr1}">
 					<input type="text" class="w480" placeholder="세부주소" name="addr2" id="addr2" value="${DATA.addr2}">
@@ -741,7 +761,7 @@
 				</c:forEach>
 					</select>
 					<label for="salary" class="pdr30" >연봉(만원)</label>
-					<input type="text" class="phalign w3-right-align" name="salary" id="salary" placeholder="(만원)" value="${DATA.salary}">
+					<input type="text" class="phalign w3-right-align" name="salary" id="salary" placeholder="(만원)">
 				</div>
 			</div>
 		</div>
@@ -781,14 +801,14 @@
 					<select class="mgr30" name="mil_type" id="mil_type">
 						<option></option>
 				<c:forEach var="data" items="${LIST9}">
-						<option value="${data.code}" <c:if test="${mil_type eq data.code}">selected</c:if> >${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.mil_type eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_level" class="pdr30 mil">계급</label>
 					<select class="mgr30" name="mil_level" id="mil_level">
 						<option></option>
 				<c:forEach var="data" items="${LIST10}">
-						<option value="${data.code}" <c:if test="${mil_level eq data.code}">selected</c:if> >${data.name}</option>
+						<option value="${data.code}" <c:if test="${DATA.mil_level eq data.code}">selected</c:if> >${data.name}</option>
 				</c:forEach>
 					</select>
 					<label for="mil_startdate" class="pdr30">입영일자</label>
@@ -836,8 +856,10 @@
 					<input type="text" id="carrier_image_name" name="carrier_image_name" readonly="readonly" value="${DATA.carrier_image_name}">
 					<input type="button" class="inblock w150 bgcw" value="다운" id="self_img">
 					<input type="button" class="inblock w150 bgcw" value="파일업로드" id="crbtn">
+				<c:forEach var="file" items="${LIST}" begin="1" end="1">
 					<input type="file" class="w3-hide" name="carrier_image" id="crfile" onchange="crfileURL(this);"
-							accept="image/*">
+							accept="image/*" src="/insa/image/upload/${file.savename}">
+				</c:forEach>
 			</div>
 			
 		</div>
@@ -863,7 +885,8 @@
 	    <input id="carrier" type="radio" name="tab_item">
 	    <label class="tab_item" for="carrier">경력사항</label>
 	    <div class="tab_content" id="content">
-	    	ㅇㅇ
+	    	<table id="mainGrid"></table>
+	    	<div id="pager"></div>
 		</div>
 	</form>
 </body>

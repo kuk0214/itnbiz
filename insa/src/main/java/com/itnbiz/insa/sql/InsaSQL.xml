@@ -347,7 +347,7 @@
 	
 	<select id="carrierSel" resultType="iVO" parameterType="int">
 		SELECT
-			cmp_name_carrier, work_start_day, work_end_day, pos_gbn_code, respon_dept, work_contents
+			cmp_name_carrier, work_start_day, work_end_day, pos_gbn_code, respon_dept_code, work_contents
 		FROM
 			insa_carrier
 		WHERE

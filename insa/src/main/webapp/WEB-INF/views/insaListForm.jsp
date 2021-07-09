@@ -112,11 +112,12 @@
 			var sabun = $('#sabun').val();
 			var name = $('#name').val();
 			var join_type = $('#join_type').val();
-			var put_yn = $('#put_yn');
+			var put_yn = $('#put_yn').val();
 			var pos_gbn = $('#pos_gbn_code').val();
 			var join_day = $('#join_day').val();
 			var retire_day = $('#retire_day').val();
 			var join_gbn = $('#join_gbn_code').val();
+			
 			
 			if(!sabun) {
 				$('#sabun').prop('disabled', true);
@@ -126,15 +127,15 @@
 				$('#name').prop('disabled', true);
 			}
 			
-			if(!join_type) {
+			if(!join_type || join_type == "(선택)") {
 				$('#join_type').prop('disabled', true);
 			}
 			
-			if(!put_yn) {
+			if(!put_yn || put_yn == "(선택)") {
 				$('#put_yn').prop('disabled', true);
 			}
 			
-			if(!pos_gbn) {
+			if(!pos_gbn || pos_gbn == "(선택)") {
 				$('#pos_gbn_code').prop('disabled', true);
 			}
 			
@@ -146,7 +147,7 @@
 				$('#retire_day').prop('disabled', true);
 			}
 			
-			if(!join_gbn) {
+			if(!join_gbn || join_gbn == "(선택)") {
 				$('#join_gbn_code').prop('disabled', true);
 			}
 			
@@ -235,7 +236,7 @@
 		<span class="w3-col w210 h40 bgcg pdt10 w3-border-top w3-border-right">입사일자</span>
 		<span class="w3-col w210 h40 bgcg pdt10 w3-border-top w3-border-right">퇴사일자</span>
 		<span class="w3-col w210 h40 bgcg pdt10 w3-border-top w3-border-right">투입여부</span>
-		<span class="w3-col w210 h40 bgcg pdt10 w3-border-top w3-border-right">연봉</span>
+		<span class="w3-col w210 h40 bgcg pdt10 w3-border-top w3-border-right sal">연봉(만원)</span>
 	</div>
 	<div class="w3-col w3-center w99per ">
 	<c:forEach var="data" items="${LIST}">
@@ -248,7 +249,7 @@
 			<span class="w3-col w210 h40 pdAll10 w3-border-right w3-border-bottom ">${data.join_day}</span>
 			<span class="w3-col w210 h40 pdAll10 w3-border-right w3-border-bottom ">${data.retire_day}</span>
 			<span class="w3-col w210 h40 pdAll10 w3-border-right w3-border-bottom ">${data.put_yn}</span>
-			<span class="w3-col w210 h40 pdAll10 w3-border-right w3-border-bottom ">${data.salary} 만원</span>
+			<span class="w3-col w210 h40 pdAll10 w3-border-right w3-border-bottom "><c:if test="${data.salary ne 0}">${data.salary}</c:if></span>
 		</div>
 	</c:forEach>
 	<c:if test="${empty LIST}">

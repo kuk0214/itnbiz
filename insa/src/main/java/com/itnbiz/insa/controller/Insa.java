@@ -303,21 +303,25 @@ public class Insa {
 		return mv;
 	}
 	
-	@RequestMapping("/optionSerch.insa")
+	@RequestMapping("/optionSearch.insa")
 	@ResponseBody
 	public Object optionSerch(InsaVO iVO) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String option = iVO.getOption();
 		int sabun = iVO.getSabun();
-		if(option.equals("put")) {
+		System.out.println(sabun);
 			List list = iDao.putSel(sabun);
-		} else if(option.equals("acad")) {
-			List list = iDao.acadSel(sabun);
-		} else {
-			List list = iDao.carrierSel(sabun);
+
+			map.put("data", "put");
+		if(option.equals("acad")) {
+			list = iDao.acadSel(sabun);
+			map.put("data", "acad");
+		} else if(option.equals("carrier")){
+			list = iDao.carrierSel(sabun);
+			map.put("data", "carrier");
 		}
 		
-		map.put("LIST", list);
+		map.put("list", list);
 		return map;
 	}
 	
