@@ -512,11 +512,18 @@
 			var pr_image = $('#profile_image').val();
 			var cmp_image = $('#cmpfile').val();
 			var cr_image = $('#crfile').val();
+			var reg_no = $('#reg_no').val();
 			
 			if(!(name && id && pwd && hp && email && join_day)) {
 				alert('필수 입력 내용을 확인하세요');
 				return
 			}
+			
+			var tmp_reg_no = "";
+			tmp_reg_no += reg_no.substring(0,6);
+			tmp_reg_no += "-";
+			tmp_reg_no += reg_no.substring(6,13);
+			$('#reg_no').val(tmp_reg_no);
 			
 			if(!salary) {
 				$('#salary').prop('disabled', true);
